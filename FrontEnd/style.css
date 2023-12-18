@@ -1,0 +1,477 @@
+@import url('https://fonts.googleapis.com/css?family=Arimo');
+
+* {
+    background-color: #FDF7E4;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    margin-top: 5%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    font-family: Arimo;
+    /* background-color: #872341; */
+    border-radius: 2rem;
+}
+
+.hide {
+    display: none;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+}
+
+.submit button {
+    width: 100%;
+    height: 2.5rem;
+    background-color: #BBAB8C;
+    margin-top: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    letter-spacing: 0.15rem;
+    font-weight: bold;
+    color: black;
+
+}
+
+.wrapper {
+    background-color: #FAEED1;
+    width: 65%;
+    padding: 5% 10%;
+    border-radius: 2rem;
+}
+
+h1 {
+    color: black;
+    background-color: #FAEED1;
+    /* margin-left: 50%; */
+    display: flex;
+    justify-content: center;
+}
+
+h1 i {
+    background-color: #FAEED1;
+    margin-right: 1rem;
+}
+
+form {
+    width: 100%;
+    background-color: #FAEED1;
+}
+
+.name {
+    background-color: #FAEED1;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.last-name {
+    /* position: absolute; */
+    margin-left: 1rem;
+}
+
+label {
+    color: black;
+    font-size: medium;
+    background-color: #FAEED1;
+    width: 45%;
+    height: 1.5rem;
+    text-transform: capitalize;
+}
+
+#first_name {
+    display: flex;
+    justify-content: space-between;
+}
+
+#name-error {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-1 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-1 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-2 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-2 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-3 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-3 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-4 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-4 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-5 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 4rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-5 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 4rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-6 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 6.2rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-6 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 6.2rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-7 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 6.2rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-7 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-8 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.3rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-8 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 6.2rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-9 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 7.3rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-9 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 10.7rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-10 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 8.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#ship-name-error-10 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 13.6rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error-11 {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    margin-left: 8.5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#submit-Error {
+    background-color: #FAEED1;
+    /* position: absolute; */
+    width: 100%;
+    justify-content: center;
+    margin-top: 2.1rem;
+    text-align: center;
+    margin-left: 5rem;
+    font-size: 0.9rem;
+    color: red;
+
+}
+
+#name-error i {
+    color: seagreen;
+}
+
+div {
+    background-color: #FAEED1;
+}
+
+input {
+    background-color: #DED0B6;
+    width: 50%;
+    letter-spacing: 0.15rem;
+    height: 1.5rem;
+    margin-left: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    /* text-align: justify; */
+
+
+}
+
+.address {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+}
+
+.address input {
+    margin-left: 22px;
+    width: 75%;
+}
+
+.addre2 {
+    margin-top: 1.5rem;
+}
+
+.location {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.cityInfo, .stateInfo, .countryInfo, .pinCode {
+    width: 18rem;
+}
+
+.personal-info {
+    position: relative;
+    /* margin: 1rem; */
+    margin-top: 1rem;
+    display: flex;
+}
+
+.gender {
+    width: 45%;
+}
+
+/* #sexInput {
+    /* margin-left: 42px; */
+/* margin-left: 40px;
+} */
+#sexInput {
+    border: 2px solid green;
+}
+
+*/ .dob {
+    margin-left: 1rem;
+}
+
+#DOBInput {
+    margin-left: 10px;
+    width: 47%;
+}
+
+.g .cityInfo input {
+    /* margin-left: 77px; */
+    width: 55%;
+    margin-bottom: 1.5rem;
+    margin-left: 76px;
+    height: 1.5rem;
+}
+
+.stateInfo input {
+    width: 55%;
+    margin-bottom: 0.5rem;
+    height: 1.5rem;
+    margin-left: 40px;
+    /* margin-left: 63px; */
+}
+
+.pinCode input {
+    width: 55%;
+}
+
+
+
+.countryInfo input {
+    width: 55%;
+    margin-bottom: 0.5rem;
+    margin-left: 32px;
+}
+
+.MobileInfo {
+    margin-bottom: 1.5rem;
+}
+
+.EmailInfo input {
+    margin-left: 82px;
+}
+
+.isSameBillingAddress {
+    margin-top: 1.5rem;
+    display: flex;
+    /* justify-content: space-between; */
+}
+
+.isSameBillingAddress input {
+    width: 15px;
+    height: 14px;
+    justify-self: flex-start;
+
+    /* margin-left: 1px; */
+}
+
+.isSameBillingAddress label {
+    width: 77%;
+    height: 20px;
+    /* justify-self: flex-start; */
+    /* height: 5%; */
+}
+
+.ship-personal-info {
+    position: relative;
+    /* margin: 1rem; */
+    margin-top: 1rem;
+    display: flex;
+}
+
+.ship-gender {
+    width: 40%;
+}
+
+#ship-sexInput {
+    /* margin-left: 42px; */
+    margin-left: 40px;
+    border: 2px solid green;
+}
+
+.ship-dob {
+    margin-left: 2rem;
+}
+
+select {
+    width: 45%;
+    margin-left: 45px;
+    background-color: #DED0B6;
+    border-radius: 0.5rem;
+    height: 1.5rem;
+}
+
+#ship-DOBInput {
+    margin-left: 20px;
+    width: 46%;
+}

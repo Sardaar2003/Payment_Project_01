@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERROR</title>
+    <link rel="stylesheet" href="failure.css">
+    <link rel="icon" href="./Images/Shipment_Logo.png" type="Images/png" style="background-color: white;">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="container">
+
+        <h1><i class="fa-solid fa-triangle-exclamation"></i>ERROR OCCURED</h1>
+        <div class="failure-content">
+
+        </div>
+        <!-- <h1>Hello</h1> -->
+
+    </div>
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        const errorData = queryParams.get('errorData');
+
+        // Parse and display data in the HTML
+        const errorContainer = document.getElementById('container');
+        const parsedData = JSON.parse(decodeURIComponent(errorData));
+        console.log(parsedData);
+
+        // if (parsedData.errors && Array.isArray(parsedData.errors)) {
+        //     parsedData.errors.forEach((error, index) => {
+        //         const errorElement = document.createElement('div');
+        //         errorElement.classList.add('error');
+        //         errorElement.innerHTML = `
+        // <p>Error ${index + 1}:</p>
+        // <ul>
+        //     <li><strong>Title:</strong> ${error.title}</li>
+        //     <li><strong>Detail:</strong> ${error.detail}</li>
+        //     <li><strong>Status:</strong> ${error.status}</li>
+        // </ul>
+        // `;
+        //         errorContainer.appendChild(errorElement);
+        //     });
+        // } else {
+        //     const errorElement = document.createElement('div');
+        //     errorElement.classList.add('error');
+        //     errorElement.textContent = 'An unexpected error occurred.';
+        //     errorContainer.appendChild(errorElement);
+        // }
+    </script>
+</body>
+
+</html>

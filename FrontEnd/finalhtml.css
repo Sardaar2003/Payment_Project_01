@@ -1,0 +1,35 @@
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: purple; */
+    background-image: url('Images/bg.png');
+    overflow: hidden;
+}
+
+.container {
+    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5), -1px -1px 2px #aaa, 1px 1px 2px #555;
+    backdrop-filter: blur(0.8rem);
+    padding: 5rem;
+    border-radius: 1rem;
+
+}
+
+h1 {
+    /* width: 100%; */
+    /* position:absolute; */
+    justify-content: center;
+    padding: 2rem;
+    color: rgb(23, 0, 128);
+    /* opacity: 0.4; */
+
+}
+
+/* .borderd {
+    border: dashed 2px green;
+    border-radius: 2rem;
+}
+
+h1 i {} */
