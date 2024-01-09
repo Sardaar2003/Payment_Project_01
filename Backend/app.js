@@ -41,12 +41,13 @@ const preDefinedReferalCode = [
   "JUsBHKQsvSKhN69ujyWq",
   "dGmgmAo75tBux8l94EpG",
 ];
-const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
+// const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
 
-async function main() {
+const run = async () => {
+  const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
   await mongoose.connect(MONG_URL);
-}
-main()
+};
+run()
   .then(() => {
     console.log(`Connected to DB`);
   })
