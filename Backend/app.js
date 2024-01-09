@@ -190,21 +190,13 @@ app.use(bodyParser.json());
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-app.get("/demoUser", async (req, res) => {
-  let fakeUser = new User({
-    email: "student@gmail.com",
-    username: "delta-student",
-  });
-  const newUser = await User.register(fakeUser, "HelloWorld");
-  res.send(newUser);
-});
 app.get("/signUp", (req, res) => {
   // res.send("Form SignUp");
   res.sendFile(path.join(__dirname, "../FrontEnd", "signUp.html"));
 });
 app.get("/home", (req, res) => {
   // console.log(path.join(__dirname, "../FrontEnd", "entryPage.html"));
-  res.sendFile(path.join(__dirname, "../FrontEnd", "entryPage.html"));
+  res.sendFile(path.join(__dirname, "../FrontEnd", "index.html"));
 });
 app.get("/new", isAuthenticated, (req, res) => {
   if (req.isAuthenticated()) {
@@ -218,11 +210,14 @@ app.get("/login", (req, res) => {
 });
 app.get("/main", isAuthenticated, (req, res) => {
   if (req.isAuthenticated()) {
-    res.sendFile(path.join(__dirname, "../FrontEnd", "index.html"));
+    res.sendFile(path.join(__dirname, "../FrontEnd", "index1.html"));
   } else {
     res.redirect("/home");
   }
 });
+// app.get("/", (req, res) => {
+//   res.redirect("/home");
+// });
 app.get("/Pending", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "InProgress.html"));
 });
@@ -352,20 +347,6 @@ async function saveData(req, arrayData, resp) {
 }
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
-const errors = [
-  {
-    title: "Invalid parameter",
-    detail: "date_of_birth must be a valid date. i.e. 01/22/2025",
-    source: {
-      parameter: "date_of_birth",
-      data_type: "DATE",
-      pointer: "/data/attributes/date_of_birth",
-    },
-    status: "400",
-  },
-  // Add more error objects if needed
-];
-
 // Route to render the error page
 app.get("/error", (req, res) => {
   res.render("error", { errors });
