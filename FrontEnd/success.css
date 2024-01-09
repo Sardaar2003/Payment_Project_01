@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #FDF7E4 !important;
+    /* Ensure the container takes the full height of the viewport */
+}
+
+.container {
+    text-align: center;
+    background-color: #FAEED1;
+    /* Center the content inside the container */
+    padding: 20px;
+    width: 45% !important;
+    height: 15vh !important;
+    border-radius: 1rem;
+    /* Optional: Add a border for visualization */
+}
+
+h1 {
+    color: green !important;
+}
+
+h1 i {
+    margin-right: 2.5rem;
+    color: green;
+
+}

@@ -1,0 +1,134 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #FDF7E4 !important;
+    /* Ensure the container takes the full height of the viewport */
+}
+
+.container {
+    text-align: center;
+    background-color: #FAEED1;
+    /* Center the content inside the container */
+    padding: 20px;
+    width: 55% !important;
+    height: 90vh !important;
+    border-radius: 1rem;
+    /* Optional: Add a border for visualization */
+}
+
+h1 {
+    color: red !important;
+}
+
+h1 i {
+    margin-right: 2.5rem;
+    color: red;
+
+}
+
+.userName, .emailID, .passWord, .referalCode {
+    display: flex;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+    margin-bottom: 1.5rem;
+
+}
+
+.userName input {
+    width: 50vh;
+    letter-spacing: 0.15rem;
+    height: 1.5rem;
+    margin-left: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.emailID input {
+    width: 50vh;
+    letter-spacing: 0.15rem;
+    height: 1.5rem;
+    margin-left: 2.2rem;
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.passWord input {
+    width: 50vh;
+    letter-spacing: 0.15rem;
+    height: 1.5rem;
+    margin-left: 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.referalCode input {
+    width: 50vh;
+    letter-spacing: 0.15rem;
+    height: 1.5rem;
+    /* margin-left: 2px; */
+    border-radius: 0.5rem;
+    border: none;
+}
+
+span {
+    height: 1rem;
+    display: flex;
+    color: red !important;
+    /* justify-content: center;
+    align-content: center; */
+    width: 45vh;
+    letter-spacing: 0.15rem;
+    /* height: 2.5rem; */
+    /* align-content: center; */
+    margin-left: 1rem;
+    margin-top: 5px;
+    /* margin-bottom: 1rem; */
+    text-align: center;
+    border-radius: 0.5rem
+}
+
+.submit-Error {
+    display: flex;
+    color: red !important;
+    justify-content: center;
+    align-content: center;
+    width: 50vh;
+    letter-spacing: 0.15rem;
+    height: 2.5rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-radius: 0.5rem
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+    align-content: flex-end;
+}
+
+.submit button {
+    width: 75%;
+    height: 2.5rem;
+    background-color: #BBAB8C;
+    margin-top: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    letter-spacing: 0.15rem;
+    font-weight: bold;
+    color: black;
+
+}
+
+.userName label, .emailID label, .passWord label, .referalCode label {
+    align-content: center;
+    margin-top: 0.25rem;
+    color: black !important;
+    font-weight: bold;
+    font-size: medium;
+    text-transform: capitalize;
+}

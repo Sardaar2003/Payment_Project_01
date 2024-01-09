@@ -14,44 +14,15 @@
 
 <body>
     <div class="container">
-
         <h1><i class="fa-solid fa-triangle-exclamation"></i>ERROR OCCURED</h1>
-        <div class="failure-content">
+        <div class="main-container">
+            <a class="button-like-home" href="/main">HOME</a>
+            <a class="button-like" href="/logout">LOGOUT</a>
 
         </div>
-        <!-- <h1>Hello</h1> -->
 
     </div>
-    <script>
-        const queryParams = new URLSearchParams(window.location.search);
-        const errorData = queryParams.get('errorData');
 
-        // Parse and display data in the HTML
-        const errorContainer = document.getElementById('container');
-        const parsedData = JSON.parse(decodeURIComponent(errorData));
-        console.log(parsedData);
-
-        // if (parsedData.errors && Array.isArray(parsedData.errors)) {
-        //     parsedData.errors.forEach((error, index) => {
-        //         const errorElement = document.createElement('div');
-        //         errorElement.classList.add('error');
-        //         errorElement.innerHTML = `
-        // <p>Error ${index + 1}:</p>
-        // <ul>
-        //     <li><strong>Title:</strong> ${error.title}</li>
-        //     <li><strong>Detail:</strong> ${error.detail}</li>
-        //     <li><strong>Status:</strong> ${error.status}</li>
-        // </ul>
-        // `;
-        //         errorContainer.appendChild(errorElement);
-        //     });
-        // } else {
-        //     const errorElement = document.createElement('div');
-        //     errorElement.classList.add('error');
-        //     errorElement.textContent = 'An unexpected error occurred.';
-        //     errorContainer.appendChild(errorElement);
-        // }
-    </script>
 </body>
 
 </html>

@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #FDF7E4;
+    /* Ensure the container takes the full height of the viewport */
+}
+
+h1 {
+    color: red;
+}
+
+
+h1 i {
+    margin-right: 1rem;
+    color: red;
+}
+
+.container {
+    text-align: center;
+    background-color: #FAEED1;
+    /* Center the content inside the container */
+    padding: 20px;
+    width: 45%;
+    height: 30vh;
+    border-radius: 1rem;
+    /* Optional: Add a border for visualization */
+}
+
+.main-container {
+    display: flex;
+    margin-top: 10%;
+    justify-content: space-evenly;
+}
+
+.btn {
+    display: inline-block;
+    /* display: inline-block; */
+    padding: 15px 15px;
+    /* margin-left: 10%; */
+    font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    /* Gradient background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Box shadow for depth */
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-2 {
+    display: inline-block;
+    padding: 15px 15px;
+    margin-left: 10%;
+    font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    /* Gradient background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Box shadow for depth */
+    transition: background 0.3s ease-in-out;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #2980b9, #3498db);
+    /* Gradient on hover */
+}
+
+.btn-2:hover {
+    background: linear-gradient(to right, #2980b9, #3498db);
+    /* Gradient on hover */
+}

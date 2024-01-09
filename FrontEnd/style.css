@@ -91,6 +91,63 @@ label {
     justify-content: space-between;
 }
 
+.button-like {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    width: 10%;
+    padding: 10px 20px;
+    margin-left: 10%;
+    text-decoration: none;
+    background-color: #4CAF50;
+    /* Green background color */
+    color: white;
+    /* White text color */
+    border: 1px solid #4CAF50;
+    /* Green border */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+}
+
+.main-container {
+    display: flex;
+    margin-top: 5%;
+    justify-content: space-between;
+}
+
+.button-like-1 {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    width: 15%;
+    padding: 10px 10px;
+    margin-left: 10%;
+    text-decoration: none;
+    background-color: #4CAF50;
+    /* Green background color */
+    color: white;
+    /* White text color */
+    border: 1px solid #4CAF50;
+    /* Green border */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+}
+
+/* Hover effect */
+.button-like:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.button-like-1:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
 #name-error {
     background-color: #FAEED1;
     /* position: absolute; */

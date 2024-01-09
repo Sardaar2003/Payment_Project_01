@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #FDF7E4 !important;
+    /* Ensure the container takes the full height of the viewport */
+}
+
+.container {
+    text-align: center;
+    background-color: #FAEED1;
+    /* Center the content inside the container */
+    padding: 20px;
+    width: 50% !important;
+    height: 50vh !important;
+    border-radius: 1rem;
+    /* Optional: Add a border for visualization */
+}
+
+.main-container {
+    background-color: #FAEED1;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed red;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    text-align: justify;
+    line-height: 1.6;
+    font-size: 16px;
+    color: #333;
+}
+
+h1 {
+    color: red !important;
+}
+
+h1 i {
+    margin-right: 2.5rem;
+    color: red;
+
+}
+
+.Button {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.Button button {
+    width: 40%;
+    height: 2.5rem;
+    background-color: #BBAB8C;
+    margin-top: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    letter-spacing: 0.15rem;
+    font-weight: bold;
+    color: black;
+
+}

@@ -96,9 +96,7 @@ btn.addEventListener("click", () => {
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
-        const errorData = encodeURIComponent(JSON.stringify(data.message));
-        // console.log(errorData);
-        window.location.href = `./failure.html?errorData=${errorData}`;
+        window.location.href = "./failure.html";
       }
     })
     .catch((err) => {

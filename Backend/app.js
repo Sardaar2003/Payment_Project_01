@@ -1,8 +1,64 @@
 const express = require("express");
 const app = express();
+const ejs = require("ejs");
 const bodyParser = require("body-parser");
 const path = require("path");
+const mongoose = require("mongoose");
+const flash = require("express-flash");
 let processingPagePath = path.join(__dirname, "../FrontEnd/processing.html");
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./autheticationSchema");
+let {
+  BillingData,
+  ShippingData,
+  UserData,
+  CardData,
+  Response,
+} = require("./StorageData.js");
+
+app.use(require("cookie-parser")());
+
+app.use(require("body-parser").urlencoded({ extended: true }));
+app.use(
+  require("express-session")({
+    secret: "keyboardcat",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
+
+const preDefinedReferalCode = [
+  "diVySKAz0mO97MTwxZQ7",
+  "0arKZcVV6b7s3AzI8HFj",
+  "IqmaUX1vLtdAUgu3jP95",
+  "yIilbsfQQVTYAZCxBehP",
+  "cnWqB3cCrsW6CIpNQbIA",
+  "rvOebZY2stSUa6Vwoo98",
+  "SHrz88YXvsIL4hGkE8Fz",
+  "ZpeYUyCLfGVn0q1xjQ3M",
+  "JUsBHKQsvSKhN69ujyWq",
+  "dGmgmAo75tBux8l94EpG",
+];
+const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
+
+async function main() {
+  await mongoose.connect(MONG_URL);
+}
+main()
+  .then(() => {
+    console.log(`Connected to DB`);
+  })
+  .catch((err) => {
+    console.log(`Failed to Connect`);
+  });
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 const port = 8080 || process.env.port;
 let userDataObj1 = {};
 let userDataObj2 = {};
@@ -109,42 +165,230 @@ function traverseObject(obj, userData) {
     }
   }
 }
+app.get("/logoutOnUnload", (req, res) => {
+  if (req.isAuthenticated()) {
+    req.logOut((err) => {
+      if (err) {
+        console.log(err);
+      }
+      res.send("User logged out on page unload");
+    });
+  } else {
+    res.send("User is not logged in");
+  }
+});
 const axios = require("axios");
 app.use(express.static(path.join(__dirname, "../FrontEnd")));
 app.use(express.json());
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
+});
+
 app.use(bodyParser.json());
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-app.get("/home", (req, res) => {
-  res.sendFile(path.join(__dirname, "../FrontEnd", "index.html"));
+app.get("/demoUser", async (req, res) => {
+  let fakeUser = new User({
+    email: "student@gmail.com",
+    username: "delta-student",
+  });
+  const newUser = await User.register(fakeUser, "HelloWorld");
+  res.send(newUser);
 });
-app.post("/OrderInfo", (req, res) => {
-  const combinedData = req.body;
-  let obj1 = JSON.parse(combinedData.data1);
-  let obj2 = JSON.parse(combinedData.data2);
-  userDataObj1 = {};
-  userDataObj2 = {};
-  traverseObject(obj1, userDataObj1);
-  traverseObject(obj2, userDataObj2);
-  arrayData.push(userDataObj1);
-  arrayData.push(userDataObj2);
-  // console.log(userDataObj1);
-  // console.log(userDataObj2);
-  res.json({ message: "Data Recieved Successfully" });
+app.get("/signUp", (req, res) => {
+  // res.send("Form SignUp");
+  res.sendFile(path.join(__dirname, "../FrontEnd", "signUp.html"));
+});
+app.get("/home", (req, res) => {
+  // console.log(path.join(__dirname, "../FrontEnd", "entryPage.html"));
+  res.sendFile(path.join(__dirname, "../FrontEnd", "entryPage.html"));
+});
+app.get("/new", isAuthenticated, (req, res) => {
+  if (req.isAuthenticated()) {
+    res.sendFile(path.join(__dirname, "../FrontEnd", "newPage.html"));
+  } else {
+    res.redirect("/home");
+  }
+});
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "loginPage.html"));
+});
+app.get("/main", isAuthenticated, (req, res) => {
+  if (req.isAuthenticated()) {
+    res.sendFile(path.join(__dirname, "../FrontEnd", "index.html"));
+  } else {
+    res.redirect("/home");
+  }
+});
+app.get("/Pending", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "InProgress.html"));
+});
+app.get("/failure", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "failure.html"));
+});
+// app.get("/success", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../FrontEnd", "failureDB.html"));
+// });
+const checkReferralCode = (codeToCheck) => {
+  return preDefinedReferalCode.includes(codeToCheck);
+};
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureMessage: "Invalid credentials",
+    failureFlash: true,
+  }),
+  async (req, res) => {
+    if (req.isAuthenticated()) {
+      res.redirect("/new");
+    } else {
+      res.redirect("/login");
+    }
+  }
+);
+app.get("/logout", (req, res) => {
+  req.logOut((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect("/home");
+  });
+});
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
+app.post("/signUpDom", isAuthenticated, async (req, res) => {
+  try {
+    const { username, emailId, passWOrd, referralCd } = req.body;
+
+    if (
+      username !== undefined &&
+      username !== "" &&
+      emailId !== undefined &&
+      emailId !== "" &&
+      passWOrd !== undefined &&
+      passWOrd !== "" &&
+      referralCd !== undefined &&
+      referralCd !== ""
+    ) {
+      const existingUserWithEmail = await User.findOne({ emailId });
+      const existingUserWithUsername = await User.findOne({ username });
+
+      if (existingUserWithEmail || existingUserWithUsername) {
+        console.log("User with duplicate emailId or username already exists");
+        res.json({ message: "Error" });
+        // Handle the duplicate case, perhaps by returning an error response.
+      } else {
+        const newUser = new User({ email: emailId, username });
+        const registeredUser = await User.register(newUser, passWOrd);
+        console.log(registeredUser);
+        res.json({
+          message: "Data Received Successfully",
+        });
+      }
+    } else {
+      res
+        .status(400)
+        .json({ message: "Invalid Data. Please check your input." });
+    }
+  } catch (error) {
+    console.error("Error in signUp endpoint:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+app.post("/OrderInfo", isAuthenticated, (req, res) => {
+  if (req.isAuthenticated()) {
+    const combinedData = req.body;
+    let obj1 = JSON.parse(combinedData.data1);
+    let obj2 = JSON.parse(combinedData.data2);
+    userDataObj1 = {};
+    userDataObj2 = {};
+    traverseObject(obj1, userDataObj1);
+    traverseObject(obj2, userDataObj2);
+    arrayData.push(userDataObj1);
+    arrayData.push(userDataObj2);
+    // console.log(userDataObj1);
+    // console.log(userDataObj2);
+    res.json({ message: "Data Recieved Successfully" });
+  } else {
+    req.redirect("/home");
+  }
+});
+async function saveData(req, arrayData, resp) {
+  try {
+    // console.log(typeof arrayData[0]);
+    let BillingAdd = arrayData[0];
+    // console.log(typeof arrayData[1]);
+    let ShippingAdd = arrayData[1];
+    let cardDetails = arrayData[2];
+    console.log(BillingAdd);
+    console.log(ShippingAdd);
+    console.log(cardDetails);
+    console.log(resp);
+    const billingDoc = await BillingData.create(BillingAdd);
+    const shippingDoc = await ShippingData.create(ShippingAdd);
+    const cardDoc = await CardData.create(cardDetails);
+    const respDoc = await Response.create({
+      ResponseType: resp,
+    });
+    const userDoc = await UserData.create({
+      User: req.user._id, // Assuming userDoc is available (you may need to adjust this based on your logic)
+      billing: billingDoc._id,
+      card: cardDoc._id,
+      shipping: shippingDoc._id,
+      response: respDoc._id,
+    });
+    console.log("Data saved:", userDoc);
+  } catch (error) {
+    console.error("Error saving data:", error);
+  }
+}
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "..", "views"));
+const errors = [
+  {
+    title: "Invalid parameter",
+    detail: "date_of_birth must be a valid date. i.e. 01/22/2025",
+    source: {
+      parameter: "date_of_birth",
+      data_type: "DATE",
+      pointer: "/data/attributes/date_of_birth",
+    },
+    status: "400",
+  },
+  // Add more error objects if needed
+];
+
+// Route to render the error page
+app.get("/error", (req, res) => {
+  res.render("error", { errors });
 });
 app.post("/CardDetails", async (req, res) => {
-  let cardInfoData = req.body;
-  cardInfo = {};
-  traverseObject(cardInfoData, cardInfo);
-  arrayData.push(cardInfo);
-  // console.log(arrayData[0].FirstName);
-  // console.log(arrayData);
-  const result = await placeOrder(arrayData);
-  console.log("Result : ", result.data.errors[0]);
-  if (result.success == false) {
-    res.json({ message: `${result.data.errors[0]}` });
+  if (req.isAuthenticated() && req.user._id != undefined) {
+    let cardInfoData = req.body;
+
+    // console.log(req.body);
+    cardInfo = {};
+    traverseObject(cardInfoData, cardInfo);
+    arrayData.push(cardInfo);
+    // console.log(arrayData);
+    const result = await placeOrder(arrayData);
+    console.log("Result : ", result);
+    if (result.success == false) {
+      saveData(req, arrayData, "Failure");
+      res.json({ message: "Data not Receieved" });
+    } else {
+      saveData(req, arrayData, "Success");
+      res.json({ message: "Data Recieved Successfully" });
+    }
   } else {
-    res.json({ message: "Data Recieved Successfully" });
+    req.redirect("/home");
   }
 });

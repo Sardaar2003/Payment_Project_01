@@ -15,9 +15,67 @@ body {
     /* Center the content inside the container */
     padding: 20px;
     width: 50%;
-    height: 75vh;
+    height: 40vh;
     border-radius: 1rem;
     /* Optional: Add a border for visualization */
+}
+
+.button-like {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    width: 10%;
+    padding: 10px 20px;
+    margin-left: 30%;
+    text-decoration: none;
+    background-color: #4CAF50;
+    /* Green background color */
+    color: white;
+    /* White text color */
+    border: 1px solid #4CAF50;
+    /* Green border */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+}
+
+.main-container {
+    display: flex;
+    margin-top: 10%;
+    justify-content: space-evenly;
+}
+
+.button-like-home {
+    display: flex;
+    justify-content: center;
+    align-content: flex-start;
+    text-align: center;
+    width: 10%;
+    padding: 10px 20px;
+    margin-left: 10%;
+    /* margin-bottom: 65%; */
+    text-decoration: none;
+    background-color: #4CAF50;
+    /* Green background color */
+    color: white;
+    /* White text color */
+    border: 1px solid #4CAF50;
+    /* Green border */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+}
+
+/* Hover effect */
+.button-like:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.button-like-home:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
 h1 {

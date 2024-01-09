@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp Page</title>
+    <link rel="stylesheet" href="signUp.css">
+    <link rel="icon" href="./Images/Shipment_Logo.png" type="Images/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- <h1 class="error-problem"></h1> -->
+        <h1><i class="fa-solid fa-user-plus"></i>SIGN UP</h1>
+        <form method="post" action="/signUpDom" onsubmit="return isValid()">
+            <div class="userName">
+                <label for="username"> USERNAME </label>
+                <input type="text" name="username" id="username" onkeyup="validateuserName()">
+                <!-- <br><br> -->
+                <br>
+                <span id="submit-Error"></span>
+            </div>
+            <div class="emailID">
+                <label for="emailId">EMAIL ID</label>
+                <input type="email" name="emailId" id="emailid" onkeyup="validateEmailId()">
+                <br>
+                <span id="submit-Error-email"></span>
+            </div>
+            <div class="passWord">
+                <label for="passWOrd">PASSWORD</label>
+                <input type="password" name="passWOrd" id="password" onkeyup="validatePassword()"><br>
+                <span id="submit-Error-password"></span>
+            </div>
+            <div class="referalCode">
+                <label for="referralCd">REFERAL CODE</label>
+                <input type="text" name="referralCd" id="referalcd" onkeyup="validateReferralCode()"><br>
+                <span id="submit-Error-referalCode"></span>
+            </div>
+            <div class=" submit">
+
+                <button onkeyup="isValid()">SIGN UP</button>
+                <br>
+                <span id="submit-Error-signUp"></span>
+                <button>RETURN TO HOME PAGE</button>
+            </div>
+        </form>
+
+    </div>
+    <script src="signUp.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN PAGE</title>
+    <link rel="stylesheet" href="loginPage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fa-solid fa-lock"></i>LOGIN</h1>
+        <form method="POST" action="/login" onsubmit="return isValid()">
+            <div class="userName">
+                <label for="username"> USERNAME </label>
+                <input type="text" name="username" id="username" onkeyup="validateuserName()">
+                <!-- <br><br> -->
+                <br>
+                <span id="submit-Error"></span>
+            </div>
+            <div class="passWord">
+                <label for="password">PASSWORD</label>
+                <input type="password" name="password" id="password" onkeyup="validatePassword()"><br>
+                <span id="submit-Error-password"></span>
+            </div>
+            <div class=" submit">
+
+                <button onkeyup="isValid()">LOGIN IN</button>
+                <br>
+                <span id="submit-Error-signUp"></span>
+                <button>RETURN TO HOME PAGE</button>
+            </div>
+            <!-- <div class="submit">
+            </div> -->
+        </form>
+    </div>
+    <script src="loginPage.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Page</title>
+</head>
+
+<body>
+  <h1>Error Details</h1>
+
+  <% if (errors && errors.length > 0) { %>
+  <ul>
+    <% errors.forEach(function(error) { %>
+    <li>
+      <strong>Title:</strong> <%= error.title %><br>
+      <strong>Detail:</strong> <%= error.detail %><br>
+      <strong>Source:</strong><br>
+      <ul>
+        <li><strong>Parameter:</strong> <%= error.source.parameter %></li>
+        <li><strong>Data Type:</strong> <%= error.source.data_type %></li>
+        <li><strong>Pointer:</strong> <%= error.source.pointer %></li>
+      </ul>
+      <strong>Status:</strong> <%= error.status %>
+    </li>
+    <% }); %>
+  </ul>
+  <% } else { %>
+  <p>No errors found.</p>
+  <% } %>
+
+</body>
+
+</html>
