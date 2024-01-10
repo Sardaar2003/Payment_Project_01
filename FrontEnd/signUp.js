@@ -140,8 +140,6 @@ button.addEventListener("click", () => {
       .then((data) => {
         if (data.message === "Data Received Successfully") {
           window.location.href = "./success.html";
-          // await delay(5000);
-          // window.location.href = "./entryPage.html";
         }
         if (data.message === "Error") {
           // console.error("Error from the Backend:", data.message);

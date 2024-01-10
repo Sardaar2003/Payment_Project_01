@@ -44,7 +44,7 @@ const preDefinedReferalCode = [
 // const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
 
 const run = async () => {
-  const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
+  const MONG_URL = "mongodb://110.224.84.21:27017/InformationData";
   await mongoose.connect(MONG_URL);
 };
 run()
@@ -149,7 +149,7 @@ const placeOrder = async (dynamicData) => {
     return {
       success: false,
       message: "Error placing the order",
-      data: error.response.data,
+      data: error.response,
     };
   }
 };
@@ -260,7 +260,7 @@ function isAuthenticated(req, res, next) {
   }
   res.redirect("/login");
 }
-app.post("/signUpDom", isAuthenticated, async (req, res) => {
+app.post("/signUpDom", async (req, res) => {
   try {
     const { username, emailId, passWOrd, referralCd } = req.body;
 
