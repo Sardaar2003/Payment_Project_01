@@ -135,7 +135,7 @@ button.addEventListener("click", () => {
             `Network response was not ok. Status: ${response.status}`
           );
         }
-        return response.json();
+        // return response.json();
       })
       .then((data) => {
         if (data.message === "Data Received Successfully") {
