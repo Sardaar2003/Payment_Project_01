@@ -217,18 +217,18 @@ app.get("/main", isAuthenticated, (req, res) => {
     res.redirect("/home");
   }
 });
-// app.get("/", (req, res) => {
-//   res.redirect("/home");
-// });
+app.get("/success", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "success.html"));
+});
 app.get("/Pending", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "InProgress.html"));
 });
 app.get("/failure", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "failure.html"));
 });
-// app.get("/success", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../FrontEnd", "failureDB.html"));
-// });
+app.get("/failDB", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "failureDB.html"));
+});
 const checkReferralCode = (codeToCheck) => {
   return preDefinedReferalCode.includes(codeToCheck);
 };
@@ -275,20 +275,21 @@ app.post("/signUpDom", async (req, res) => {
       referralCd !== undefined &&
       referralCd !== ""
     ) {
-      const existingUserWithEmail = await User.findOne({ emailId });
+      const existingUserWithEmail = await User.findOne({ email: emailId });
+      // console.log(existingUserWithEmail);
       const existingUserWithUsername = await User.findOne({ username });
+      // console.log(existingUserWithUsername);
 
       if (existingUserWithEmail || existingUserWithUsername) {
         console.log("User with duplicate emailId or username already exists");
-        res.json({ message: "Error" });
+        // res.json({ message: "Error" });
+        res.redirect("/failDB");
         // Handle the duplicate case, perhaps by returning an error response.
       } else {
         const newUser = new User({ email: emailId, username });
         const registeredUser = await User.register(newUser, passWOrd);
         console.log(registeredUser);
-        res.json({
-          message: "Data Received Successfully",
-        });
+        res.redirect("/success");
       }
     } else {
       res
@@ -297,7 +298,7 @@ app.post("/signUpDom", async (req, res) => {
     }
   } catch (error) {
     console.error("Error in signUp endpoint:", error);
-    // res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 app.post("/OrderInfo", isAuthenticated, (req, res) => {

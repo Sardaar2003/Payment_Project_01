@@ -122,38 +122,34 @@ button.addEventListener("click", () => {
       passWOrd: passWord,
       referralCd: referalCode,
     };
-    fetch("/signUpDom", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Network response was not ok. Status: ${response.status}`
-          );
-        }
-        // return response.json();
-      })
-      .then((data) => {
-        if (data.message === "Data Received Successfully") {
-          window.location.href = "./success.html";
-        }
-        if (data.message === "Error") {
-          // console.error("Error from the Backend:", data.message);
-          window.location.href = "./failureDB.html";
-        } else {
-          console.log("Error Occured");
-        }
-      })
-      .catch((err) => {
-        console.error(
-          "There was an issue with the fetch operation:",
-          err.message
-        );
-      });
+    // fetch("/signUpDom", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error(
+    //         `Network response was not ok. Status: ${response.status}`
+    //       );
+    //     }
+    //     // return response.json();
+    //   })
+    //   .then((data) => {
+    //     if (data.message === "Data Received Successfully") {
+    //       window.location.href = "./success.html";
+    //     } else {
+    //       window.location.href = "./failureDB.html";
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.error(
+    //       "There was an issue with the fetch operation:",
+    //       err.message
+    //     );
+    //   });
     // setTimeout(() => {
     //   window.location.href = "./entryPage.html";
     // }, 5000);
