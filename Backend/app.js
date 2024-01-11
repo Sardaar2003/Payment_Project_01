@@ -44,7 +44,8 @@ const preDefinedReferalCode = [
 // const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
 
 const run = async () => {
-  const MONG_URL = "mongodb://110.224.84.21:27017/InformationData";
+  const MONG_URL =
+    "mongodb+srv://singhmantej536:may8dWkKK00se71F@paymentgate.rs63o6h.mongodb.net/?retryWrites=true&w=majority";
   await mongoose.connect(MONG_URL);
 };
 run()
@@ -296,7 +297,7 @@ app.post("/signUpDom", async (req, res) => {
     }
   } catch (error) {
     console.error("Error in signUp endpoint:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    // res.status(500).json({ message: "Internal Server Error" });
   }
 });
 app.post("/OrderInfo", isAuthenticated, (req, res) => {
