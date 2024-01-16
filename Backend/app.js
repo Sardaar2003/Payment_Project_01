@@ -55,7 +55,7 @@ const preDefinedReferalCode = [
 // const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
 
 const run = async () => {
-  const MONG_URL = `mongodb+srv://singhmantej536:${process.env.MONGODBKEY}@paymentgate.rs63o6h.mongodb.net/?retryWrites=true&w=majority`;
+  const MONG_URL = `mongodb+srv://singhmantej536:iIzxGIOb3eDaoCPx@paymentgate.rs63o6h.mongodb.net/?retryWrites=true&w=majority`;
   await mongoose.connect(MONG_URL);
 };
 run()
@@ -78,7 +78,7 @@ let cardInfo = {};
 let arrayData = [];
 const placeOrder = async (dynamicData) => {
   const endpoint = "https://jsonapi.focalpoynt.com/v1/orders/";
-  const apiToken = `${process.env.APITOKEN}`; // Replace with your actual API token
+  const apiToken = `fc60055f226e4bef823ff5b3e4d3b1ca`; // Replace with your actual API token
 
   const dataToSend = {
     data: {
