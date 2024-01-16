@@ -230,6 +230,9 @@ app.get("/main", isAuthenticated, (req, res) => {
     res.redirect("/home");
   }
 });
+app.get("/Success", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "final.html"));
+});
 app.get("/success", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "success.html"));
 });
