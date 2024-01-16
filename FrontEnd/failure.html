@@ -15,14 +15,34 @@
 <body>
     <div class="container">
         <h1><i class="fa-solid fa-triangle-exclamation"></i>ERROR OCCURED</h1>
+        <div id="errorList"></div>
         <div class="main-container">
-            <a class="button-like-home" href="/main">HOME</a>
+            <!-- <br> -->
+            <a class="button-like-home" href="./newPage.html">HOME</a>
             <a class="button-like" href="/logout">LOGOUT</a>
 
         </div>
 
     </div>
+    <script>
+        // Retrieve error details from URL parameters
+        const queryParams = new URLSearchParams(window.location.search);
+        const errors = JSON.parse(queryParams.get('errors'));
 
+        // Display error details on the page
+        const errorListContainer = document.getElementById('errorList');
+        if (errors && errors.length > 0) {
+            const ul = document.createElement('ul');
+            errors.forEach(error => {
+                const li = document.createElement('li');
+                li.textContent = `${error.title}: ${error.detail}`;
+                ul.appendChild(li);
+            });
+            errorListContainer.appendChild(ul);
+        } else {
+            errorListContainer.textContent = 'No errors found.';
+        }
+    </script>
 </body>
 
 </html>

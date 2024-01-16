@@ -15,7 +15,7 @@ body {
     /* Center the content inside the container */
     padding: 20px;
     width: 50%;
-    height: 40vh;
+    height: 80vh;
     border-radius: 1rem;
     /* Optional: Add a border for visualization */
 }
@@ -42,8 +42,17 @@ body {
 
 .main-container {
     display: flex;
-    margin-top: 10%;
+    margin-top: 5%;
     justify-content: space-evenly;
+}
+
+li {
+    color: black;
+    text-transform: capitalize;
+    font-size: large;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
 }
 
 .button-like-home {

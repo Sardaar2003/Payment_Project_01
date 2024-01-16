@@ -18,7 +18,7 @@
 
 <body>
     <div class="card">
-        <form method="post" action="/CardDetails">
+        <form method="post" action="/CardDetails" id="myForm" onsubmit="return validateForm()">
             <h1 class="card_title">ENTER PAYMENT INFORMATION</h1>
             <div class="card__row">
                 <div class="card__col">
@@ -37,6 +37,16 @@
                 </div>
                 <div class="card__col card__brand"><i id="card__brand"></i></div>
             </div>
+            <div class="checkBox-Info">
+                <div class="dazzleInfo">
+                    <input type="radio" id="dazzle" class="checkbox" name="promo" value="GHLT1425">
+                    <label for="dazzle">HEALTH AND WELLNESS PROGRAM</label>
+                </div>
+                <div class="callDocInfo">
+                    <input type="radio" id="calladoc" class="checkbox" name="promo" value="PRGC1420">
+                    <label for="calladoc">PROTECTION PROGRAM</label>
+                </div>
+            </div>
             <div class="submit">
                 <label for="SubmitInfo" class="Submit"></label>
                 <button type="button" id="SubmitInfo">SUBMIT</button>
@@ -53,6 +63,7 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
     </script> -->
     <script src="main.js"></script>
+
 </body>
 
 </html>

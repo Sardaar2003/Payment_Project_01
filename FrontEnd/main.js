@@ -46,7 +46,16 @@ const cleaveCCV = new Cleave("#cardCcv", {
 });
 
 let btn = document.getElementById("SubmitInfo");
-// console.log(btn);
+let selectedCheckbox = null;
+let stor;
+const dazzleRadio = document.getElementById("dazzle");
+const calladocRadio = document.getElementById("calladoc");
+if (dazzleRadio.checked) {
+  stor = dazzleRadio.value;
+} else {
+  stor = calladocRadio.value;
+}
+console.log(stor);
 btn.addEventListener("click", () => {
   // console.log("Button was clicked");
   btn.disabled = true;
@@ -77,9 +86,10 @@ btn.addEventListener("click", () => {
     cardExpiry: cardEx,
     cardCcv: cardCCV,
     cardBrand: cardbrand,
+    promo_id: stor,
   };
   const cardInfoJson = JSON.stringify(cardInfo, null, 2);
-  // console.log(cardInfoJson);
+  console.log(cardInfoJson);
   fetch("/CardDetails", {
     method: "POST",
     headers: {
@@ -96,7 +106,12 @@ btn.addEventListener("click", () => {
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
-        window.location.href = "./failure.html";
+        console.log(data.Error);
+        const queryParams = new URLSearchParams({
+          errors: JSON.stringify(data.Error),
+        });
+        window.location.href = `./failure.html?${queryParams.toString()}`;
+        // window.location.href = "./failure.html";
       }
     })
     .catch((err) => {

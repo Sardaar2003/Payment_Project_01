@@ -457,9 +457,10 @@ checkbx.addEventListener("click", () => {
 function convertDateFormat(inputDate) {
   // Split the input date into day, month, and year
   const dateParts = inputDate.split("-");
-
+  console.log(dateParts);
   // Rearrange the date parts to the desired format "mm-dd-yyyy"
-  const formattedDate = `${dateParts[1]}/${dateParts[2]}/${dateParts[0]}`;
+  const formattedDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
+  console.log(formattedDate);
 
   return formattedDate;
 }
@@ -486,7 +487,7 @@ button.addEventListener("click", () => {
       FirstName: fnameInp.value,
       LastName: lnameInp.value,
       Gender: gender.value,
-      DOB: convertDateFormat(dob.value),
+      DOB: dob.value,
       Address1: add1Inp.value,
       Address2: add2Inp.value,
       City: cityInp.value,
@@ -505,7 +506,7 @@ button.addEventListener("click", () => {
         ShipFirstName: fnameInp.value,
         ShipLastName: lnameInp.value,
         ShipGender: gender.value,
-        ShipDOB: convertDateFormat(dob.value),
+        ShipDOB: dob.value,
         ShipAddress1: add1Inp.value,
         ShipAddress2: add2Inp.value,
         ShipCity: cityInp.value,

@@ -24,6 +24,24 @@ body {
 
 }
 
+.checkBox-Info {
+    /* background-color: green; */
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.checkBox-Info label {
+    color: white;
+}
+
+/* #dazzleInfo {
+    padding: 10px;
+    margin-bottom: 14px;
+} */
+
 .card__row {
     display: flex;
     justify-content: space-between;
