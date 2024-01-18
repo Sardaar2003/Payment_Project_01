@@ -381,7 +381,21 @@ app.get("/error", (req, res) => {
 });
 const getFormattedTimestamp = () => {
   const now = new Date();
-  return `${now.getDate}`;
+
+  // Options for formatting the date and time
+  const options = {
+    timeZone: "America/New_York", // Eastern Time Zone
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // 24-hour format
+  };
+
+  // Format the date and time using toLocaleString
+  return now.toLocaleString("en-US", options);
 };
 const logDataSchema = new mongoose.Schema({
   timestamp: String,
@@ -468,7 +482,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
       "CITY",
       "STATE",
       "COUNTRY",
-      "PINCODE",
+      "ZIPCODE",
       "MOBILE NUMBER",
       "EMAIL ID",
       "CARD NUMBER",
