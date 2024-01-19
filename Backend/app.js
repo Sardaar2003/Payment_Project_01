@@ -326,6 +326,7 @@ app.post("/signUpDom", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+let promo_type;
 app.post("/OrderInfo", isAuthenticated, (req, res) => {
   if (req.isAuthenticated()) {
     const combinedData = req.body;
@@ -417,6 +418,7 @@ const logDataSchema = new mongoose.Schema({
   cardExpiry: String,
   cardCcv: String,
   cardBrand: String,
+  Promo_type: String,
 });
 const LogData = mongoose.model("LogData", logDataSchema);
 const saveDataToMongoDB = async (arrayData, resp, usern) => {
@@ -447,6 +449,7 @@ const saveDataToMongoDB = async (arrayData, resp, usern) => {
       cardExpiry: cardInfoPart.cardExpiry,
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
+      Promo_type: promo_type,
     });
 
     await logEntry.save();
@@ -456,6 +459,120 @@ const saveDataToMongoDB = async (arrayData, resp, usern) => {
     console.error("Error saving log data to MongoDB:", error);
   }
 };
+function formatTimestampToDateString(timestampString) {
+  // Parse the timestamp string to get a valid JavaScript Date object
+  const date = new Date(timestampString);
+
+  // Check if the parsed date is valid
+  if (isNaN(date.getTime())) {
+    console.error("Invalid timestamp string:", timestampString);
+    return "Invalid Date";
+  }
+
+  const day = date.getDate();
+  const month = date.toLocaleDateString("en-US", { month: "long" });
+  const year = date.getFullYear();
+
+  function addOrdinalSuffix(day) {
+    if (day >= 11 && day <= 13) {
+      return day + "th";
+    } else {
+      switch (day % 10) {
+        case 1:
+          return day + "st";
+        case 2:
+          return day + "nd";
+        case 3:
+          return day + "rd";
+        default:
+          return day + "th";
+      }
+    }
+  }
+
+  const formattedDate = `${addOrdinalSuffix(day)} ${month} ${year}`;
+  return formattedDate;
+}
+app.get("/projectManagement", async (req, res) => {
+  try {
+    // Fixed values
+    const fixedValues = {
+      accountVendorId: "DOC WELLNESS",
+      paymentAmount: 9.95,
+    };
+
+    // Excel headers
+    const headers = [
+      "Sl. No.",
+      "Account Vendor Id",
+      "Account : Account Name",
+      "Bill To: Work Phone",
+      "Payment Effective Date",
+      "Payment Amount",
+      "Account : Product ID",
+      "Account : Filename",
+      "Status",
+    ];
+
+    // Create a new workbook and add a worksheet
+    const workbook = new excel.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet 1", {
+      properties: { tabColor: { argb: "FF00FF00" } },
+    });
+
+    // Add headers to the worksheet
+    worksheet.addRow(headers);
+
+    // Fetch dynamic data from the database (logData schema in this case)
+    const data = await LogData.find({});
+
+    // Populate the worksheet with dynamic data
+    data.forEach((item, index) => {
+      const rowData = [
+        index + 1, // Sl. No.
+        fixedValues.accountVendorId,
+        item.firstName + " " + item.lastName,
+        item.mobileNumber,
+        formatTimestampToDateString(item.timestamp),
+        fixedValues.paymentAmount,
+        item.Promo_type == "HEALTH AND WELLNESS PROGRAM"
+          ? "DOC WELLNESS-HEALTH PLAN"
+          : "DOC WELLNESS-ID PROTECTION",
+        item.Promo_type == "HEALTH AND WELLNESS PROGRAM" ? "DWH-1" : "DWI-1",
+        item.response,
+      ];
+
+      worksheet.addRow(rowData);
+    });
+
+    // Generate a unique filename for the Excel file
+    const fileName = `project_management_${Date.now()}.xlsx`;
+    const filePath = `${__dirname}/${fileName}`;
+
+    // Save the workbook to a file
+    await workbook.xlsx.writeFile(filePath);
+
+    // Set headers for Excel file download
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
+
+    // Stream the file to the client
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+
+    // Remove the generated file after streaming
+    fileStream.on("end", () => {
+      fs.unlinkSync(filePath);
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.get("/insertDataAndDownload", async (req, res) => {
   try {
     // Fetch all log data from MongoDB
@@ -489,6 +606,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
       "EXPIRY DATE",
       "CCV",
       "CARD BRAND",
+      "PROMO_TYPE",
     ];
     worksheet.addRow(headers);
 
@@ -514,6 +632,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
         logEntry.cardExpiry,
         logEntry.cardCcv,
         logEntry.cardBrand,
+        logEntry.Promo_type,
       ];
       worksheet.addRow(values);
     });
@@ -542,7 +661,9 @@ app.post("/CardDetails", async (req, res) => {
     cardInfo = {};
     traverseObject(cardInfoData, cardInfo);
     promo_ID = cardInfo.promo_id;
-    // console.log(promo);
+    if (promo_ID == "GHLT1425") promo_type = "HEALTH AND WELLNESS PROGRAM";
+    else promo_type = "PROTECTION PROGRAM";
+    console.log(promo_ID);
     delete cardInfo.promo_id;
     console.log(cardInfo);
     arrayData.push(cardInfo);

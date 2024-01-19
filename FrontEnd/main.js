@@ -50,7 +50,7 @@ let selectedCheckbox = null;
 let stor;
 const dazzleRadio = document.getElementById("dazzle");
 const calladocRadio = document.getElementById("calladoc");
-if (dazzleRadio.checked) {
+if (!dazzleRadio.checked) {
   stor = dazzleRadio.value;
 } else {
   stor = calladocRadio.value;
