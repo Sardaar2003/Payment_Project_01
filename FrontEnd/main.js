@@ -48,14 +48,8 @@ const cleaveCCV = new Cleave("#cardCcv", {
 let btn = document.getElementById("SubmitInfo");
 let selectedCheckbox = null;
 let stor;
-const dazzleRadio = document.getElementById("dazzle");
-const calladocRadio = document.getElementById("calladoc");
-if (dazzleRadio.checked) {
-  stor = dazzleRadio.value;
-} else {
-  stor = calladocRadio.value;
-}
-console.log(stor);
+
+// console.log(stor);
 btn.addEventListener("click", () => {
   // console.log("Button was clicked");
   btn.disabled = true;
@@ -63,6 +57,14 @@ btn.addEventListener("click", () => {
   const cardN = document.getElementById("cardNumber").value;
   const cardEx = document.getElementById("cardExpiry").value;
   const cardCCV = document.getElementById("cardCcv").value;
+  const dazzleRadio = document.getElementById("dazzle");
+  const calladocRadio = document.getElementById("calladoc");
+  if (dazzleRadio.checked == true) {
+    stor = dazzleRadio.value;
+  } else {
+    stor = calladocRadio.value;
+  }
+  console.log(stor);
   // console.log(
   //   ` Card Number : ${cardN} \n Card Exp : ${cardEx} \n Card CCV : ${cardCCV}`
   // );
