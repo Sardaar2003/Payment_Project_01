@@ -655,6 +655,24 @@ app.get("/insertDataAndDownload", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+const checkDuplicateEntry = async (promoId, cardNumber, phoneNum) => {
+  try {
+    // Perform a query to check for duplicates
+    const existingEntry = await LogData.findOne({
+      Promo_ID: promoId,
+      cardNumber: cardNumber,
+      mobileNumber: phoneNum,
+      response: "Success",
+    });
+
+    // If a duplicate entry is found, return true
+    return !!existingEntry;
+  } catch (error) {
+    // Handle any errors during the database query
+    console.error("Error checking for duplicate entry:", error);
+    throw error; // Rethrow the error if needed
+  }
+};
 app.post("/CardDetails", async (req, res) => {
   if (req.isAuthenticated() && req.user._id != undefined) {
     let cardInfoData = req.body;
@@ -663,37 +681,46 @@ app.post("/CardDetails", async (req, res) => {
     cardInfo = {};
     traverseObject(cardInfoData, cardInfo);
     promo_ID = cardInfo.promo_id;
+    let number = cardInfo.cardNumber;
+    let phoneNum = arrayData[0].MobileNumber;
+    console.log(promo_ID, " ", number, " ", phoneNum);
     if (promo_ID == "GHLT1425") promo_type = "HEALTH AND WELLNESS PROGRAM";
     else promo_type = "PROTECTION PROGRAM";
     console.log(promo_ID);
     delete cardInfo.promo_id;
     console.log(cardInfo);
     arrayData.push(cardInfo);
-
+    // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
     console.log(arrayData);
-    // console.log(arrayData[0].DOB.split("/").reverse().join("/"));
-    const result = await placeOrder(arrayData);
-    console.log(result);
-    // console.log("Result : ", result.data.data.errors);
-    try {
-      const errors = result.data.data.errors;
-      console.log(errors);
-    } catch (err) {
-      console.log("Error Occured");
-    }
+    let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
+    console.log(isDuplicate);
+    if (!isDuplicate) {
+      // console.log(arrayData[0].DOB.split("/").reverse().join("/"));
+      const result = await placeOrder(arrayData);
+      console.log(result);
+      // console.log("Result : ", result.data.data.errors);
+      try {
+        const errors = result.data.data.errors;
+        console.log(errors);
+      } catch (err) {
+        console.log("Error Occured");
+      }
 
-    if (result.success == false) {
-      // updateExcelWithNewData(arrayData, "Failure", req.user);
-      // saveData(req, arrayData, "Failure");
-      saveDataToMongoDB(arrayData, "Failure", req.user);
-      res.json({
-        message: "Data not Receieved",
-        Error: result.data.data.errors,
-      });
+      if (result.success == false) {
+        // updateExcelWithNewData(arrayData, "Failure", req.user);
+        // saveData(req, arrayData, "Failure");
+        saveDataToMongoDB(arrayData, "Failure", req.user);
+        res.json({
+          message: "Data not Receieved",
+          Error: result.data.data.errors,
+        });
+      } else {
+        saveData(req, arrayData, "Success");
+        saveDataToMongoDB(arrayData, "Success", req.user);
+        res.json({ message: "Data Recieved Successfully" });
+      }
     } else {
-      saveData(req, arrayData, "Success");
-      saveDataToMongoDB(arrayData, "Success", req.user);
-      res.json({ message: "Data Recieved Successfully" });
+      res.redirect("/failDB");
     }
   } else {
     res.redirect("/home");
