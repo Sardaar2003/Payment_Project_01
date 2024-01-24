@@ -170,11 +170,7 @@ function validateShipAdName() {
 function validateAddName() {
   const add2Inp = document.getElementById("add2Input").value;
   const data = document.getElementById("add2Input");
-  if (add2Inp == "") {
-    nameError4.innerHTML = "ADDRESS IS REQUIRED";
-    data.style.border = "2px solid red";
-    return false;
-  }
+  if (add2Inp === "") return true;
   if (!add2Inp.match(/^[0-9a-zA-Z\s,]{1,50}$/)) {
     nameError4.innerHTML = "Length range is 1 to 50";
     data.style.border = "2px solid red";
@@ -272,14 +268,14 @@ function validateShipState() {
   return true;
 }
 function validateCountry() {
-  const countryInp = document.getElementById("countryInput").value;
+  let countryInp = document.getElementById("countryInput").value;
   const data = document.getElementById("countryInput");
-  if (countryInp == "") {
-    nameError8.innerHTML = "COUNTRY REQUIRED";
-    data.style.border = "2px solid red";
-    return false;
-  }
-  if (!countryInp.match(/^[A-Za-z0-9]{1,3}$/)) {
+  if (countryInp === "") {
+    countryInp = "US";
+    nameError8.innerHTML = "";
+    data.style.border = "2px solid green";
+    return true;
+  } else if (!countryInp.match(/^[A-Za-z0-9]{1,3}$/)) {
     nameError8.innerHTML = "Length range is 1 to 3";
     data.style.border = "2px solid red";
     return false;
@@ -376,11 +372,11 @@ function validateShipMobile() {
 function validateEmail() {
   const emailInp = document.getElementById("emailInput").value;
   const data = document.getElementById("emailInput");
-  if (emailInp == "") {
-    nameError11.innerHTML = "EMAIL ID IS REQUIRED";
-    data.style.border = "2px solid red";
-    return false;
-  }
+  // if (emailInp == "") {
+  //   nameError11.innerHTML = "EMAIL ID IS REQUIRED";
+  //   data.style.border = "2px solid red";
+  //   return false;
+  // }
   if (!emailInp.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
     nameError11.innerHTML = "INVALID EMAIL";
     data.style.border = "2px solid red";

@@ -94,12 +94,13 @@
                     </div>
                     <div class="countryInfo">
                         <label for="country">COUNTRY</label>
-                        <input type="text" name="country" id="countryInput" onkeyup="validateCountry()" required>
+                        <input type="text" name="country" id="countryInput" onkeyup="validateCountry()" placeholder="US"
+                            required>
                         <br>
                         <span id="name-error-8"></span>
                     </div>
                     <div class="pinCode">
-                        <label for="pinCode">PINCODE</label>
+                        <label for="pinCode">ZIPCODE</label>
                         <input type="text" name="pinCode" id="pinCodeInput" onkeyup="validatePincode()" required>
                         <br>
                         <span id="name-error-9"></span>
@@ -201,7 +202,7 @@
                                 <span id="ship-name-error-7"></span>
                             </div>
                             <div class="pinCode">
-                                <label for="ship-pinCode">PINCODE</label>
+                                <label for="ship-pinCode">ZIPCODE</label>
                                 <input type="text" name="ship-pinCode" id="ship-pinCodeInput"
                                     onkeyup="validateShipPincode()" required>
                                 <br>

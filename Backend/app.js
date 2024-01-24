@@ -662,7 +662,6 @@ const checkDuplicateEntry = async (promoId, cardNumber, phoneNum) => {
       Promo_ID: promoId,
       cardNumber: cardNumber,
       mobileNumber: phoneNum,
-      response: "Success",
     });
 
     // If a duplicate entry is found, return true
@@ -677,24 +676,24 @@ app.post("/CardDetails", async (req, res) => {
   if (req.isAuthenticated() && req.user._id != undefined) {
     let cardInfoData = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     cardInfo = {};
     traverseObject(cardInfoData, cardInfo);
     promo_ID = cardInfo.promo_id;
     let number = cardInfo.cardNumber;
     let phoneNum = arrayData[0].MobileNumber;
-    console.log(promo_ID, " ", number, " ", phoneNum);
+    // console.log(promo_ID, " ", number, " ", phoneNum);
     if (promo_ID == "GHLT1425") promo_type = "HEALTH AND WELLNESS PROGRAM";
     else promo_type = "PROTECTION PROGRAM";
-    console.log(promo_ID);
+    // console.log(promo_ID);
     delete cardInfo.promo_id;
-    console.log(cardInfo);
+    // console.log(cardInfo);
     arrayData.push(cardInfo);
     // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
     console.log(arrayData);
     let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
     console.log(isDuplicate);
-    if (!isDuplicate) {
+    if (isDuplicate == false) {
       // console.log(arrayData[0].DOB.split("/").reverse().join("/"));
       const result = await placeOrder(arrayData);
       console.log(result);
@@ -720,7 +719,8 @@ app.post("/CardDetails", async (req, res) => {
         res.json({ message: "Data Recieved Successfully" });
       }
     } else {
-      res.redirect("/failDB");
+      // res.redirect("/failDB");
+      res.json({ message: "Duplicate Elements" });
     }
   } else {
     res.redirect("/home");

@@ -105,6 +105,10 @@ btn.addEventListener("click", () => {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
         window.location.href = "./final.html";
+      } else if (data.message == "Duplicate Elements") {
+        btn.disabled = false;
+        btn.innerHTML = "SUBMIT";
+        window.location.href = "./failureDB.html";
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
