@@ -372,11 +372,11 @@ function validateShipMobile() {
 function validateEmail() {
   const emailInp = document.getElementById("emailInput").value;
   const data = document.getElementById("emailInput");
-  // if (emailInp == "") {
-  //   nameError11.innerHTML = "EMAIL ID IS REQUIRED";
-  //   data.style.border = "2px solid red";
-  //   return false;
-  // }
+  if (emailInp == "") {
+    nameError11.innerHTML = "";
+    data.style.border = "2px solid green";
+    return true;
+  }
   if (!emailInp.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
     nameError11.innerHTML = "INVALID EMAIL";
     data.style.border = "2px solid red";
