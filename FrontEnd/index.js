@@ -372,7 +372,7 @@ function validateShipMobile() {
 function validateEmail() {
   const emailInp = document.getElementById("emailInput").value;
   const data = document.getElementById("emailInput");
-  if (emailInp == "") {
+  if (emailInp === "") {
     nameError11.innerHTML = "";
     data.style.border = "2px solid green";
     return true;
