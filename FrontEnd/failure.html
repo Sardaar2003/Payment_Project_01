@@ -28,17 +28,25 @@
         // Retrieve error details from URL parameters
         const queryParams = new URLSearchParams(window.location.search);
         const errors = JSON.parse(queryParams.get('errors'));
+        console.log(errors);
 
-        // Display error details on the page
         const errorListContainer = document.getElementById('errorList');
         if (errors && errors.length > 0) {
             const ul = document.createElement('ul');
-            errors.forEach(error => {
+            try {
+                errors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = `${error.title}: ${error.detail}` || `${error}`;
+                    ul.appendChild(li);
+                });
+                errorListContainer.appendChild(ul);
+            } catch (err) {
+                const ul = document.createElement('ul');
                 const li = document.createElement('li');
-                li.textContent = `${error.title}: ${error.detail}`;
+                li.textContent = errors;
                 ul.appendChild(li);
-            });
-            errorListContainer.appendChild(ul);
+                errorListContainer.appendChild(ul);
+            }
         } else {
             errorListContainer.textContent = 'No errors found.';
         }

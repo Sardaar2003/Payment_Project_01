@@ -28,6 +28,7 @@ body {
     /* background-color: green; */
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px 10px 10px 10px;
@@ -35,9 +36,14 @@ body {
 
 .checkBox-Info label {
     color: white;
+    margin-left: 10px;
 }
 
-/* #dazzleInfo {
+.checkBox-Info input {
+    margin-left: 10px;
+}
+
+/* #SaversCentral {
     padding: 10px;
     margin-bottom: 14px;
 } */

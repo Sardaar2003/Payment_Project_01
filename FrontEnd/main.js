@@ -59,10 +59,21 @@ btn.addEventListener("click", () => {
   const cardCCV = document.getElementById("cardCcv").value;
   const dazzleRadio = document.getElementById("dazzle");
   const calladocRadio = document.getElementById("calladoc");
+  const saverCentral = document.getElementById("saverscentral");
+  const holidayStay = document.getElementById("holiday");
+  const idvault = document.getElementById("idv");
   if (dazzleRadio.checked == true) {
     stor = dazzleRadio.value;
   } else {
-    stor = calladocRadio.value;
+    if (calladocRadio.checked == true) {
+      stor = calladocRadio.value;
+    } else if (saverCentral.checked == true) {
+      stor = saverCentral.value;
+    } else if (holidayStay.checked == true) {
+      stor = holidayStay.value;
+    } else {
+      stor = idvault.value;
+    }
   }
   console.log(stor);
   // console.log(
