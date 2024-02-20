@@ -672,7 +672,9 @@ const checkDuplicateEntry = async (promoId, cardNumber, phoneNum) => {
     throw error; // Rethrow the error if needed
   }
 };
-
+app.get("/getInfo", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
+});
 const apiUrl = "https://redeo.sublytics.com/api/order/doAddProcess";
 
 app.post("/CardDetails", async (req, res) => {
@@ -680,82 +682,108 @@ app.post("/CardDetails", async (req, res) => {
     let cardInfoData = req.body;
 
     // console.log(req.body);
+    console.log(arrayData[0].State);
+    console.log(arrayData[0].State == "MN");
     cardInfo = {};
     traverseObject(cardInfoData, cardInfo);
     promo_ID = cardInfo.promo_id;
     console.log(promo_ID.includes("/"));
     let number = cardInfo.cardNumber;
     let phoneNum = arrayData[0].MobileNumber;
+    let flag = false;
     if (promo_ID.includes("/")) {
-      arrayData.push(cardInfo);
-      console.log(arrayData);
-      let parts = promo_ID.split("/");
-      let number1 = parseInt(parts[0], 10);
-      let number2 = parseInt(parts[1], 10);
-      let stringPart = parts[2];
-      data = arrayData[2].cardExpiry.replace(/\//g, "");
-      var firstTwoDigits = parseInt(data.substring(0, 2));
-      var lastTwoDigits = parseInt(data.substring(data.length - 2));
-      const requestData = {
-        user_id: `${process.env.USR_ID}`,
-        user_password: `${process.env.USR_PWD}`,
-        connection_id: 1,
-        payment_method_id: 1, // Fixed at 1
-        campaign_id: number1,
-        offers: [
-          {
-            offer_id: number2,
-            order_offer_quantity: 1,
-          },
-        ],
+      if (
+        arrayData[0].State == "IA" ||
+        arrayData[0].State == "MN" ||
+        arrayData[0].State == "VT" ||
+        arrayData[0].State == "WI"
+      ) {
+        console.log("It is working");
+        // res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
+        // res.redirect("/getInfo");
+        res.json({
+          message: "Error State not Valid",
+        });
+      } else {
+        arrayData.push(cardInfo);
+        // console.log(arrayData);
+        let parts = promo_ID.split("/");
+        let number1 = parseInt(parts[0], 10);
+        let number2 = parseInt(parts[1], 10);
+        let stringPart = parts[2];
+        data = arrayData[2].cardExpiry.replace(/\//g, "");
+        var firstTwoDigits = parseInt(data.substring(0, 2));
+        var lastTwoDigits = parseInt(data.substring(data.length - 2));
+        const requestData = {
+          user_id: `${process.env.USR_ID}`,
+          user_password: `${process.env.USR_PWD}`,
+          connection_id: 1,
+          payment_method_id: 1, // Fixed at 1
+          campaign_id: number1,
+          offers: [
+            {
+              offer_id: number2,
+              order_offer_quantity: 1,
+            },
+          ],
 
-        email: arrayData[0].EmailId,
-        phone: arrayData[0].MobileNumber,
-        bill_fname: arrayData[0].FirstName,
-        bill_lname: arrayData[0].LastName,
-        bill_country: "US",
-        bill_address1: arrayData[0].Address1,
-        bill_address2: arrayData[0].Address2,
-        bill_city: arrayData[0].City,
-        bill_state: arrayData[0].State,
-        bill_zipcode: arrayData[0].Pincode,
-        shipping_same: true, // Is the shipping address same as the billing address
-        card_type_id: 1,
-        card_number: arrayData[2].cardNumber.replace(/-/g, ""),
-        card_cvv: parseInt(arrayData[2].cardCcv),
-        card_exp_month: firstTwoDigits,
-        card_exp_year: lastTwoDigits,
-      };
-      try {
-        const response = await axios.post(apiUrl, requestData);
-        console.log("Response:", response.data);
-        // Handle successful response
-        return res.json({ message: "Data Recieved Successfully" });
-      } catch (error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error("Response Status:", error.response.status);
-          console.error("Response Data:", error.response.data);
-          console.error("Response Data : ", error.response.data.message);
-          res.json({
-            message: "Data not Receieved",
-            Error: error.response.data.message,
-          });
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error("No response received:", error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error("Error:", error.message);
-        }
-        return {
-          success: false,
-          message: "Error placing the order",
-          error: error.response
-            ? error.response.data
-            : "No response from server",
+          email: arrayData[0].EmailId,
+          phone: arrayData[0].MobileNumber,
+          bill_fname: arrayData[0].FirstName,
+          bill_lname: arrayData[0].LastName,
+          bill_country: "US",
+          bill_address1: arrayData[0].Address1,
+          bill_address2: arrayData[0].Address2,
+          bill_city: arrayData[0].City,
+          bill_state: arrayData[0].State,
+          bill_zipcode: arrayData[0].Pincode,
+          shipping_same: true, // Is the shipping address same as the billing address
+          card_type_id:
+            arrayData[2].cardBrand == "MC"
+              ? 1
+              : arrayData[2].cardBrand == "VS"
+              ? 2
+              : arrayData[2].cardBrand == "DS"
+              ? 3
+              : arrayData[2].cardBrand == "AX"
+              ? 4
+              : -1,
+          card_number: arrayData[2].cardNumber.replace(/-/g, ""),
+          card_cvv: parseInt(arrayData[2].cardCcv),
+          card_exp_month: firstTwoDigits,
+          card_exp_year: lastTwoDigits,
         };
+        try {
+          const response = await axios.post(apiUrl, requestData);
+          console.log("Response:", response.data);
+          // Handle successful response
+          return res.json({ message: "Data Recieved Successfully" });
+        } catch (error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error("Response Status:", error.response.status);
+            console.error("Response Data:", error.response.data);
+            console.error("Response Data : ", error.response.data.message);
+            res.json({
+              message: "Data not Receieved",
+              Error: error.response.data.message,
+            });
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.error("No response received:", error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error("Error:", error.message);
+          }
+          return {
+            success: false,
+            message: "Error placing the order",
+            error: error.response
+              ? error.response.data
+              : "No response from server",
+          };
+        }
       }
     } else {
       if (promo_ID == "GHLT1425")

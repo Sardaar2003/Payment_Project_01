@@ -120,6 +120,10 @@ btn.addEventListener("click", () => {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
         window.location.href = "./failureDB.html";
+      } else if (data.message == "Error State not Valid") {
+        btn.disabled = false;
+        btn.innerHTML = "SUBMIT";
+        window.location.href = "./errorPage.html";
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";

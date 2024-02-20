@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <link rel="stylesheet" href="errorPage.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <h1><i class="fa-solid fa-triangle-exclamation"></i> ERROR OCCURED YOU CANNOT ORDER FROM THESE STATE
+            <ul>
+                <li>IOWA (IA)</li>
+                <li>MINNESOTA (MN)</li>
+                <li>VERMONT (VT)</li>
+                <li>WISCONSIN (WI)</li>
+            </ul>
+        </h1>
+
+        <h2><i class="fa-solid fa-hourglass-end"></i> REDIRECTING TO THE HOME PAGE</h2>
+    </div>
+    <script>
+        setTimeout(() => {
+            window.location.href = "./newPage.html";
+
+        }, 5000);
+    </script>
+</body>
+
+</html>
