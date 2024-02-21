@@ -420,9 +420,10 @@ const logDataSchema = new mongoose.Schema({
   cardBrand: String,
   Promo_ID: String,
   Promo_type: String,
+  Project_Number: String,
 });
 const LogData = mongoose.model("LogData", logDataSchema);
-const saveDataToMongoDB = async (arrayData, resp, usern) => {
+const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
   try {
     const [billing, shipping, card] = arrayData;
     billingInfo = {};
@@ -451,7 +452,13 @@ const saveDataToMongoDB = async (arrayData, resp, usern) => {
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
       Promo_ID: promo_ID,
-      Promo_type: promo_type,
+      Promo_type:
+        promo == "ID Vault" ||
+        promo == "Holiday Savers Online" ||
+        promo == "Savers Central Online"
+          ? promo
+          : promo_type,
+      Project_Number: project,
     });
 
     await logEntry.save();
@@ -609,6 +616,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
       "CCV",
       "CARD BRAND",
       "PROMO_TYPE",
+      "PROJECT NUMBER",
     ];
     worksheet.addRow(headers);
 
@@ -635,6 +643,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
         logEntry.cardCcv,
         logEntry.cardBrand,
         logEntry.Promo_type,
+        logEntry.Project_Number,
       ];
       worksheet.addRow(values);
     });
@@ -757,6 +766,17 @@ app.post("/CardDetails", async (req, res) => {
           const response = await axios.post(apiUrl, requestData);
           console.log("Response:", response.data);
           // Handle successful response
+          saveDataToMongoDB(
+            arrayData,
+            "Success",
+            req.user,
+            "Project_02",
+            stringPart == "SC"
+              ? "Savers Central Online"
+              : stringPart == "HS"
+              ? "Holiday Savers Online"
+              : "ID Vault"
+          );
           return res.json({ message: "Data Recieved Successfully" });
         } catch (error) {
           if (error.response) {
@@ -765,6 +785,17 @@ app.post("/CardDetails", async (req, res) => {
             console.error("Response Status:", error.response.status);
             console.error("Response Data:", error.response.data);
             console.error("Response Data : ", error.response.data.message);
+            saveDataToMongoDB(
+              arrayData,
+              "Failure",
+              req.user,
+              "Project_02",
+              stringPart == "SC"
+                ? "Savers Central Online"
+                : stringPart == "HS"
+                ? "Holiday Savers Online"
+                : "ID Vault"
+            );
             res.json({
               message: "Data not Receieved",
               Error: error.response.data.message,
@@ -813,14 +844,14 @@ app.post("/CardDetails", async (req, res) => {
         if (result.success == false) {
           // updateExcelWithNewData(arrayData, "Failure", req.user);
           // saveData(req, arrayData, "Failure");
-          saveDataToMongoDB(arrayData, "Failure", req.user);
+          saveDataToMongoDB(arrayData, "Failure", req.user, "Project_01", "");
           res.json({
             message: "Data not Receieved",
             Error: result.data.data.errors,
           });
         } else {
           saveData(req, arrayData, "Success");
-          saveDataToMongoDB(arrayData, "Success", req.user);
+          saveDataToMongoDB(arrayData, "Success", req.user, "Project_01", "");
           res.json({ message: "Data Recieved Successfully" });
         }
       } else {
