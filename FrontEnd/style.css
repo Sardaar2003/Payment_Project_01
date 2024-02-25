@@ -111,6 +111,24 @@ label {
     transition: background-color 0.3s;
 }
 
+
+
+.radioButton {
+    margin-bottom: 5%;
+}
+
+.radioButton label {
+    margin-left: 10%;
+    margin-bottom: 10%;
+    padding-bottom: 10%;
+}
+
+.radioButton input {
+    padding: 0;
+    width: 10%;
+    height: 10%;
+}
+
 .main-container {
     display: flex;
     margin-top: 5%;

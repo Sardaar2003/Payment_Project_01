@@ -124,6 +124,10 @@ btn.addEventListener("click", () => {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
         window.location.href = "./errorPage.html";
+      } else if (data.message == "Error Occured") {
+        btn.disabled = false;
+        btn.innerHTML = "SUBMIT";
+        window.location.href = "./generalError.html";
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";

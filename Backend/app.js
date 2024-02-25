@@ -28,7 +28,9 @@ let {
   Response,
 } = require("./StorageData.js");
 app.use(require("cookie-parser")());
-
+app.get("/healthCheck", (req, res) => {
+  res.status(200).send("Server is Up and Running");
+});
 app.use(require("body-parser").urlencoded({ extended: true }));
 app.use(
   require("express-session")({
@@ -152,14 +154,18 @@ const placeOrder = async (dynamicData) => {
   try {
     const response = await axios.post(endpoint, dataToSend, { headers });
     // console.log(response.data);
-    return { success: true, message: "Order Successfully Placed" };
+    return {
+      success: true,
+      message: "Order Successfully Placed",
+      data: "Success",
+    };
   } catch (error) {
     // console.error(error.response.data);
     // console.error(error.response.data);
     return {
       success: false,
       message: "Error placing the order",
-      data: error.response,
+      data: error.response.data.errors,
     };
   }
 };
@@ -193,8 +199,10 @@ app.use(express.static(path.join(__dirname, "../FrontEnd")));
 app.use(express.json());
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something went wrong!");
+  // console.error(err.stack);
+
+  // res.status(500).send("Something went wrong!");
+  res.sendFile(path.join(__dirname, "../FrontEnd", "generalError.html"));
 });
 
 app.use(bodyParser.json());
@@ -322,7 +330,7 @@ app.post("/signUpDom", async (req, res) => {
         .json({ message: "Invalid Data. Please check your input." });
     }
   } catch (error) {
-    console.error("Error in signUp endpoint:", error);
+    console.log("Error in signUp endpoint:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -352,10 +360,10 @@ async function saveData(req, arrayData, resp) {
     // console.log(typeof arrayData[1]);
     let ShippingAdd = arrayData[1];
     let cardDetails = arrayData[2];
-    console.log(BillingAdd);
-    console.log(ShippingAdd);
-    console.log(cardDetails);
-    console.log(resp);
+    // console.log(BillingAdd);
+    // console.log(ShippingAdd);
+    // console.log(cardDetails);
+    // console.log(resp);
     const billingDoc = await BillingData.create(BillingAdd);
     const shippingDoc = await ShippingData.create(ShippingAdd);
     const cardDoc = await CardData.create(cardDetails);
@@ -371,7 +379,7 @@ async function saveData(req, arrayData, resp) {
     });
     console.log("Data saved:", userDoc);
   } catch (error) {
-    console.error("Error saving data:", error);
+    console.log("Error saving data:", error);
   }
 }
 app.set("view engine", "ejs");
@@ -465,7 +473,7 @@ const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
     // arrayData = [];
     console.log("Log data saved to MongoDB.");
   } catch (error) {
-    console.error("Error saving log data to MongoDB:", error);
+    console.log("Error saving log data to MongoDB:", error);
   }
 };
 function formatTimestampToDateString(timestampString) {
@@ -685,21 +693,33 @@ app.get("/getInfo", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
 });
 const apiUrl = "https://redeo.sublytics.com/api/order/doAddProcess";
-
+app.use((err, req, res, next) => {
+  if (err.status === 400 || err.status === 500) {
+    // res.status(400).send("Bad Request");
+    res.redirect("/genError") ||
+      res.sendFile(ath.join(__dirname, "../FrontEnd", "generalError.html"));
+  } else {
+    next(err);
+  }
+});
+app.get("/genError", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "generalError.html"));
+});
 app.post("/CardDetails", async (req, res) => {
   if (req.isAuthenticated() && req.user._id != undefined) {
     let cardInfoData = req.body;
 
     // console.log(req.body);
-    console.log(arrayData[0].State);
-    console.log(arrayData[0].State == "MN");
+    // console.log(arrayData[0].State);
+    // console.log(arrayData[0].State == "MN");
     cardInfo = {};
     traverseObject(cardInfoData, cardInfo);
     promo_ID = cardInfo.promo_id;
-    console.log(promo_ID.includes("/"));
+    // console.log(promo_ID.includes("/"));
     let number = cardInfo.cardNumber;
     let phoneNum = arrayData[0].MobileNumber;
     let flag = false;
+
     if (promo_ID.includes("/")) {
       if (
         arrayData[0].State == "IA" ||
@@ -707,7 +727,7 @@ app.post("/CardDetails", async (req, res) => {
         arrayData[0].State == "VT" ||
         arrayData[0].State == "WI"
       ) {
-        console.log("It is working");
+        // console.log("It is working");
         // res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
         // res.redirect("/getInfo");
         res.json({
@@ -764,7 +784,7 @@ app.post("/CardDetails", async (req, res) => {
         };
         try {
           const response = await axios.post(apiUrl, requestData);
-          console.log("Response:", response.data);
+          // console.log("Response:", response.data);
           // Handle successful response
           saveDataToMongoDB(
             arrayData,
@@ -777,14 +797,17 @@ app.post("/CardDetails", async (req, res) => {
               ? "Holiday Savers Online"
               : "ID Vault"
           );
+          // console.log(response.data);
+          // console.log(response.data.data);
+
           return res.json({ message: "Data Recieved Successfully" });
         } catch (error) {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.error("Response Status:", error.response.status);
-            console.error("Response Data:", error.response.data);
-            console.error("Response Data : ", error.response.data.message);
+            // console.log("Response Status:", error.response.status);
+            // console.error("Response Data:", error.response.data);
+            // console.error("Response Data : ", error.response.data.message);
             saveDataToMongoDB(
               arrayData,
               "Failure",
@@ -802,10 +825,12 @@ app.post("/CardDetails", async (req, res) => {
             });
           } else if (error.request) {
             // The request was made but no response was received
-            console.error("No response received:", error.request);
+            console.log("No response received:");
+            res.json({ message: "Error Occured" });
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.error("Error:", error.message);
+            console.log("Error:");
+            res.json({ message: "Error Occured" });
           }
           return {
             success: false,
@@ -826,38 +851,32 @@ app.post("/CardDetails", async (req, res) => {
       // console.log(cardInfo);
       arrayData.push(cardInfo);
       // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
-      console.log(arrayData);
+      // console.log(arrayData);
       let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
-      console.log(isDuplicate);
+      // console.log(isDuplicate);
       if (isDuplicate == false) {
-        // console.log(arrayData[0].DOB.split("/").reverse().join("/"));
-        const result = await placeOrder(arrayData);
-        console.log(result.success);
-        // console.log("Result : ", result.data.data.errors);
         try {
-          const errors = result.data.data.errors;
-          console.log(errors);
+          const result = await placeOrder(arrayData);
+          console.log(result.data);
+          if (result.success == true && result.data == "Success") {
+            saveData(req, arrayData, "Success");
+            saveDataToMongoDB(arrayData, "Success", req.user, "Project_01", "");
+            res.json({ message: "Data Recieved Successfully" });
+          } else {
+            saveDataToMongoDB(arrayData, "Failure", req.user, "Project_01", "");
+            res.json({
+              message: "Data not Receieved",
+              Error: result.data,
+            });
+          }
         } catch (err) {
-          console.log("Error Occured");
-        }
-
-        if (result.success == false) {
-          // updateExcelWithNewData(arrayData, "Failure", req.user);
-          // saveData(req, arrayData, "Failure");
-          saveDataToMongoDB(arrayData, "Failure", req.user, "Project_01", "");
-          res.json({
-            message: "Data not Receieved",
-            Error: result.data.data.errors,
-          });
-        } else {
-          saveData(req, arrayData, "Success");
-          saveDataToMongoDB(arrayData, "Success", req.user, "Project_01", "");
-          res.json({ message: "Data Recieved Successfully" });
+          console.log("Error Occured : ");
+          res.json({ message: "Error Occured" });
         }
       } else {
         // res.redirect("/failDB");
         res.json({ message: "Duplicate Elements" });
-        return;
+        // return;
       }
       // res.redirect("/home");
     }

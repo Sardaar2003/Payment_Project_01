@@ -1,6 +1,30 @@
 let checkbx = document.getElementById("BillingDiff");
+const projectRadios = document.querySelectorAll('input[name="project"]');
+const infoDiv = document.querySelector(".Info");
+// infoDiv.style.display = "block";
+infoDiv.classList.add("hide");
+function toggleInfoVisibility() {
+  if (projectRadios[0].checked) {
+    infoDiv.classList.remove("hide");
+    radioButton2.disabled = true; // Disable the second radio button
+  } else if (projectRadios[1].checked) {
+    infoDiv.classList.remove("hide");
+    radioButton1.disabled = true; // Disable the first radio button
+  } else {
+    infoDiv.classList.add("hide");
+    radioButton1.disabled = false; // Enable the first radio button
+    radioButton2.disabled = false; // Enable the second radio button
+  }
+}
+projectRadios.forEach((radio) => {
+  radio.addEventListener("change", toggleInfoVisibility);
+});
 let shipContainer = document.getElementsByClassName("shipContainer")[0];
 let button = document.querySelector("button");
+// let radioBtn = document.getElementById("name-error");
+const radioButton1 = document.getElementById("project01");
+const radioButton2 = document.getElementById("project02");
+// const radio = radioButton1.checked == true ? "01" : "02";
 let nameError = document.getElementById("name-error");
 let nameError1 = document.getElementById("name-error-1");
 let nameError2 = document.getElementById("name-error-2");
@@ -110,11 +134,22 @@ function validateShipLName() {
 function validateDName() {
   const dob = document.getElementById("DOBInput").value;
   const data = document.getElementById("DOBInput");
-  if (dob == "") {
-    nameError2.innerHTML = "DOB IS REQUIRED";
-    data.style.border = "2px solid red";
-    return false;
+  const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+
+  if (radioButton1.checked == true) {
+    if (dob === "") {
+      nameError2.innerHTML = "DOB IS REQUIRED";
+      data.style.border = "2px solid red";
+      return false;
+    }
+
+    if (!dateRegex.test(dob)) {
+      nameError2.innerHTML = "DOB in mm/dd/yyyy format";
+      data.style.border = "2px solid red";
+      return false;
+    }
   }
+
   nameError2.innerHTML = "";
   data.style.border = "2px solid green";
   return true;
@@ -372,15 +407,18 @@ function validateShipMobile() {
 function validateEmail() {
   const emailInp = document.getElementById("emailInput").value;
   const data = document.getElementById("emailInput");
-  if (emailInp === "") {
-    nameError11.innerHTML = "";
-    data.style.border = "2px solid green";
-    return true;
-  }
-  if (!emailInp.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
-    nameError11.innerHTML = "INVALID EMAIL";
-    data.style.border = "2px solid red";
-    return false;
+  if (radioButton2.checked == true) {
+    if (emailInp === "") {
+      nameError11.innerHTML = "EMAIL ID IS REQUIRED";
+      data.style.border = "2px solid red";
+      return false;
+    }
+
+    if (!emailInp.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+      nameError11.innerHTML = "INVALID EMAIL";
+      data.style.border = "2px solid red";
+      return false;
+    }
   }
   nameError11.innerHTML = "";
   data.style.border = "2px solid green";
@@ -404,6 +442,25 @@ function validateShipEmail() {
   return true;
 }
 function submitForm() {
+  // if (
+  //   validateName() &&
+  //   validateLName() &&
+  //   validateAdName() &&
+  //   validateCity() &&
+  //   validateState() &&
+  //   validateCountry() &&
+  //   validatePincode() &&
+  //   validateMobile()
+  // ) {
+  //   if (radio == "01") {
+  //     return !validateDName() ? true : false;
+  //   } else {
+  //     return !validateEmail() ? true : false;
+  //   }
+  // } else {
+  //   submitError.innerHTML = "Fix the necessary Errors";
+  //   return false;
+  // }
   if (
     !validateAdName() ||
     !validateAddName() ||
@@ -443,20 +500,20 @@ function submitShipForm() {
 }
 checkbx.addEventListener("click", () => {
   if (checkbx.checked == false) {
-    console.log("Successfull Added");
+    // console.log("Successfull Added");
     shipContainer.classList.add("hide");
   } else {
-    console.log("Successfully Removed");
+    // console.log("Successfully Removed");
     shipContainer.classList.remove("hide");
   }
 });
 function convertDateFormat(inputDate) {
   // Split the input date into day, month, and year
   const dateParts = inputDate.split("-");
-  console.log(dateParts);
+  // console.log(dateParts);
   // Rearrange the date parts to the desired format "mm-dd-yyyy"
   const formattedDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
-  console.log(formattedDate);
+  // console.log(formattedDate);
 
   return formattedDate;
 }
@@ -474,7 +531,7 @@ button.addEventListener("click", () => {
   const pinCodeInp = document.getElementById("pinCodeInput");
   const mobileInp = document.getElementById("mobileInput");
   const emailInp = document.getElementById("emailInput");
-  console.log(dob.value);
+  // console.log(dob.value);
   if (
     (checkbx.checked == false && submitForm()) ||
     (checkbx.checked == true && submitShipForm() && submitForm())

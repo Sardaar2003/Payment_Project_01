@@ -28,7 +28,7 @@
         // Retrieve error details from URL parameters
         const queryParams = new URLSearchParams(window.location.search);
         const errors = JSON.parse(queryParams.get('errors'));
-        console.log(errors);
+        // console.log(errors);
 
         const errorListContainer = document.getElementById('errorList');
         if (errors && errors.length > 0) {
