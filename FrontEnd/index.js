@@ -463,7 +463,6 @@ function submitForm() {
   // }
   if (
     !validateAdName() ||
-    !validateAddName() ||
     !validateCity() ||
     !validateCountry() ||
     !validateDName() ||
