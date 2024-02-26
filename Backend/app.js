@@ -706,111 +706,90 @@ app.get("/genError", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "generalError.html"));
 });
 app.post("/CardDetails", async (req, res) => {
-  if (req.isAuthenticated() && req.user._id != undefined) {
-    let cardInfoData = req.body;
+  try {
+    if (req.isAuthenticated() && req.user._id != undefined) {
+      let cardInfoData = req.body;
 
-    // console.log(req.body);
-    // console.log(arrayData[0].State);
-    // console.log(arrayData[0].State == "MN");
-    cardInfo = {};
-    traverseObject(cardInfoData, cardInfo);
-    promo_ID = cardInfo.promo_id;
-    // console.log(promo_ID.includes("/"));
-    let number = cardInfo.cardNumber;
-    let phoneNum = arrayData[0].MobileNumber;
-    let flag = false;
+      // console.log(req.body);
+      // console.log(arrayData[0].State);
+      // console.log(arrayData[0].State == "MN");
+      cardInfo = {};
+      traverseObject(cardInfoData, cardInfo);
+      promo_ID = cardInfo.promo_id;
+      // console.log(promo_ID.includes("/"));
+      let number = cardInfo.cardNumber;
+      let phoneNum = arrayData[0].MobileNumber;
+      let flag = false;
 
-    if (promo_ID.includes("/")) {
-      if (
-        arrayData[0].State == "IA" ||
-        arrayData[0].State == "MN" ||
-        arrayData[0].State == "VT" ||
-        arrayData[0].State == "WI"
-      ) {
-        // console.log("It is working");
-        // res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
-        // res.redirect("/getInfo");
-        res.json({
-          message: "Error State not Valid",
-        });
-      } else {
-        arrayData.push(cardInfo);
-        // console.log(arrayData);
-        let parts = promo_ID.split("/");
-        let number1 = parseInt(parts[0], 10);
-        let number2 = parseInt(parts[1], 10);
-        let stringPart = parts[2];
-        data = arrayData[2].cardExpiry.replace(/\//g, "");
-        var firstTwoDigits = parseInt(data.substring(0, 2));
-        var lastTwoDigits = parseInt(data.substring(data.length - 2));
-        const requestData = {
-          user_id: `${process.env.USR_ID}`,
-          user_password: `${process.env.USR_PWD}`,
-          connection_id: 1,
-          payment_method_id: 1, // Fixed at 1
-          campaign_id: number1,
-          offers: [
-            {
-              offer_id: number2,
-              order_offer_quantity: 1,
-            },
-          ],
+      if (promo_ID.includes("/")) {
+        if (
+          arrayData[0].State == "IA" ||
+          arrayData[0].State == "MN" ||
+          arrayData[0].State == "VT" ||
+          arrayData[0].State == "WI"
+        ) {
+          // console.log("It is working");
+          // res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
+          // res.redirect("/getInfo");
+          res.json({
+            message: "Error State not Valid",
+          });
+        } else {
+          arrayData.push(cardInfo);
+          // console.log(arrayData);
+          let parts = promo_ID.split("/");
+          let number1 = parseInt(parts[0], 10);
+          let number2 = parseInt(parts[1], 10);
+          let stringPart = parts[2];
+          data = arrayData[2].cardExpiry.replace(/\//g, "");
+          var firstTwoDigits = parseInt(data.substring(0, 2));
+          var lastTwoDigits = parseInt(data.substring(data.length - 2));
+          const requestData = {
+            user_id: `${process.env.USR_ID}`,
+            user_password: `${process.env.USR_PWD}`,
+            connection_id: 1,
+            payment_method_id: 1, // Fixed at 1
+            campaign_id: number1,
+            offers: [
+              {
+                offer_id: number2,
+                order_offer_quantity: 1,
+              },
+            ],
 
-          email: arrayData[0].EmailId,
-          phone: arrayData[0].MobileNumber,
-          bill_fname: arrayData[0].FirstName,
-          bill_lname: arrayData[0].LastName,
-          bill_country: "US",
-          bill_address1: arrayData[0].Address1,
-          bill_address2: arrayData[0].Address2,
-          bill_city: arrayData[0].City,
-          bill_state: arrayData[0].State,
-          bill_zipcode: arrayData[0].Pincode,
-          shipping_same: true, // Is the shipping address same as the billing address
-          card_type_id:
-            arrayData[2].cardBrand == "MC"
-              ? 1
-              : arrayData[2].cardBrand == "VS"
-              ? 2
-              : arrayData[2].cardBrand == "DS"
-              ? 3
-              : arrayData[2].cardBrand == "AX"
-              ? 4
-              : -1,
-          card_number: arrayData[2].cardNumber.replace(/-/g, ""),
-          card_cvv: parseInt(arrayData[2].cardCcv),
-          card_exp_month: firstTwoDigits,
-          card_exp_year: lastTwoDigits,
-        };
-        try {
-          const response = await axios.post(apiUrl, requestData);
-          // console.log("Response:", response.data);
-          // Handle successful response
-          saveDataToMongoDB(
-            arrayData,
-            "Success",
-            req.user,
-            "Project_02",
-            stringPart == "SC"
-              ? "Savers Central Online"
-              : stringPart == "HS"
-              ? "Holiday Savers Online"
-              : "ID Vault"
-          );
-          // console.log(response.data);
-          // console.log(response.data.data);
-
-          return res.json({ message: "Data Recieved Successfully" });
-        } catch (error) {
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            // console.log("Response Status:", error.response.status);
-            // console.error("Response Data:", error.response.data);
-            // console.error("Response Data : ", error.response.data.message);
+            email: arrayData[0].EmailId,
+            phone: arrayData[0].MobileNumber,
+            bill_fname: arrayData[0].FirstName,
+            bill_lname: arrayData[0].LastName,
+            bill_country: "US",
+            bill_address1: arrayData[0].Address1,
+            bill_address2: arrayData[0].Address2,
+            bill_city: arrayData[0].City,
+            bill_state: arrayData[0].State,
+            bill_zipcode: arrayData[0].Pincode,
+            shipping_same: true, // Is the shipping address same as the billing address
+            card_type_id:
+              arrayData[2].cardBrand == "MC"
+                ? 1
+                : arrayData[2].cardBrand == "VS"
+                ? 2
+                : arrayData[2].cardBrand == "DS"
+                ? 3
+                : arrayData[2].cardBrand == "AX"
+                ? 4
+                : -1,
+            card_number: arrayData[2].cardNumber.replace(/-/g, ""),
+            card_cvv: parseInt(arrayData[2].cardCcv),
+            card_exp_month: firstTwoDigits,
+            card_exp_year: lastTwoDigits,
+          };
+          try {
+            const response = await axios.post(apiUrl, requestData);
+            // console.log("Response:", response.data);
+            // Handle successful response
             saveDataToMongoDB(
               arrayData,
-              "Failure",
+              "Success",
               req.user,
               "Project_02",
               stringPart == "SC"
@@ -819,66 +798,104 @@ app.post("/CardDetails", async (req, res) => {
                 ? "Holiday Savers Online"
                 : "ID Vault"
             );
-            res.json({
-              message: "Data not Receieved",
-              Error: error.response.data.message,
-            });
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.log("No response received:");
-            res.json({ message: "Error Occured" });
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log("Error:");
-            res.json({ message: "Error Occured" });
+            // console.log(response.data);
+            // console.log(response.data.data);
+
+            return res.json({ message: "Data Recieved Successfully" });
+          } catch (error) {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              // console.log("Response Status:", error.response.status);
+              // console.error("Response Data:", error.response.data);
+              // console.error("Response Data : ", error.response.data.message);
+              saveDataToMongoDB(
+                arrayData,
+                "Failure",
+                req.user,
+                "Project_02",
+                stringPart == "SC"
+                  ? "Savers Central Online"
+                  : stringPart == "HS"
+                  ? "Holiday Savers Online"
+                  : "ID Vault"
+              );
+              res.json({
+                message: "Data not Receieved",
+                Error: error.response.data.message,
+              });
+            } else if (error.request) {
+              // The request was made but no response was received
+              console.log("No response received:");
+              res.json({ message: "Error Occured" });
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log("Error:");
+              res.json({ message: "Error Occured" });
+            }
+            return {
+              success: false,
+              message: "Error placing the order",
+              error: error.response
+                ? error.response.data
+                : "No response from server",
+            };
           }
-          return {
-            success: false,
-            message: "Error placing the order",
-            error: error.response
-              ? error.response.data
-              : "No response from server",
-          };
-        }
-      }
-    } else {
-      if (promo_ID == "GHLT1425")
-        // console.log(promo_ID, " ", number, " ", phoneNum);
-        promo_type = "HEALTH AND WELLNESS PROGRAM";
-      else promo_type = "PROTECTION PROGRAM";
-      // console.log(promo_ID);
-      delete cardInfo.promo_id;
-      // console.log(cardInfo);
-      arrayData.push(cardInfo);
-      // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
-      // console.log(arrayData);
-      let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
-      // console.log(isDuplicate);
-      if (isDuplicate == false) {
-        try {
-          const result = await placeOrder(arrayData);
-          console.log(result.data);
-          if (result.success == true && result.data == "Success") {
-            saveData(req, arrayData, "Success");
-            saveDataToMongoDB(arrayData, "Success", req.user, "Project_01", "");
-            res.json({ message: "Data Recieved Successfully" });
-          } else {
-            saveDataToMongoDB(arrayData, "Failure", req.user, "Project_01", "");
-            res.json({
-              message: "Data not Receieved",
-              Error: result.data,
-            });
-          }
-        } catch (err) {
-          console.log("Error Occured : ");
-          res.json({ message: "Error Occured" });
         }
       } else {
-        // res.redirect("/failDB");
-        res.json({ message: "Duplicate Elements" });
-        // return;
+        if (promo_ID == "GHLT1425")
+          // console.log(promo_ID, " ", number, " ", phoneNum);
+          promo_type = "HEALTH AND WELLNESS PROGRAM";
+        else promo_type = "PROTECTION PROGRAM";
+        // console.log(promo_ID);
+        delete cardInfo.promo_id;
+        // console.log(cardInfo);
+        arrayData.push(cardInfo);
+        // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
+        // console.log(arrayData);
+        let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
+        // console.log(isDuplicate);
+        if (isDuplicate == false) {
+          try {
+            const result = await placeOrder(arrayData);
+            console.log(result.data);
+            if (result.success == true && result.data == "Success") {
+              saveData(req, arrayData, "Success");
+              saveDataToMongoDB(
+                arrayData,
+                "Success",
+                req.user,
+                "Project_01",
+                ""
+              );
+              res.json({ message: "Data Recieved Successfully" });
+            } else {
+              saveDataToMongoDB(
+                arrayData,
+                "Failure",
+                req.user,
+                "Project_01",
+                ""
+              );
+              res.json({
+                message: "Data not Receieved",
+                Error: result.data,
+              });
+            }
+          } catch (err) {
+            console.log("Error Occured : ");
+            res.json({ message: "Error Occured" });
+          }
+        } else {
+          // res.redirect("/failDB");
+          res.json({ message: "Duplicate Elements" });
+          // return;
+        }
+        // res.redirect("/home");
       }
-      // res.redirect("/home");
     }
+  } catch (err) {
+    console.log("Error Occured : ");
+    res.json({ message: "Error Occured" });
   }
 });
