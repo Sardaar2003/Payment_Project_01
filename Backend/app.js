@@ -76,7 +76,7 @@ const port = 8080 || process.env.port;
 let userDataObj1 = {};
 let userDataObj2 = {};
 let cardInfo = {};
-let arrayData = [];
+
 const placeOrder = async (dynamicData) => {
   const endpoint = "https://jsonapi.focalpoynt.com/v1/orders/";
   const apiToken = `${process.env.APITOKEN}`; // Replace with your actual API token
@@ -232,7 +232,6 @@ app.get("/login", (req, res) => {
 });
 app.get("/main", isAuthenticated, (req, res) => {
   if (req.isAuthenticated()) {
-    arrayData = [];
     res.sendFile(path.join(__dirname, "../FrontEnd", "index1.html"));
   } else {
     res.redirect("/home");
@@ -344,8 +343,11 @@ app.post("/OrderInfo", isAuthenticated, (req, res) => {
     userDataObj2 = {};
     traverseObject(obj1, userDataObj1);
     traverseObject(obj2, userDataObj2);
+    let arrayData = req.session.arrayData || [];
+    arrayData = [];
     arrayData.push(userDataObj1);
     arrayData.push(userDataObj2);
+    req.session.arrayData = arrayData;
     // console.log(userDataObj1);
     // console.log(userDataObj2);
     res.json({ message: "Data Recieved Successfully" });
@@ -709,24 +711,26 @@ app.post("/CardDetails", async (req, res) => {
   try {
     if (req.isAuthenticated() && req.user._id != undefined) {
       let cardInfoData = req.body;
-
+      let arrayData = req.session.arrayData || [];
       // console.log(req.body);
       // console.log(arrayData[0].State);
       // console.log(arrayData[0].State == "MN");
       cardInfo = {};
       traverseObject(cardInfoData, cardInfo);
+      arrayData.push(cardInfo);
+      req.session.arrayData = arrayData;
       promo_ID = cardInfo.promo_id;
       // console.log(promo_ID.includes("/"));
-      let number = cardInfo.cardNumber;
-      let phoneNum = arrayData[0].MobileNumber;
+      let number = req.session.arrayData[2].cardNumber;
+      let phoneNum = req.session.arrayData[0].MobileNumber;
       let flag = false;
 
       if (promo_ID.includes("/")) {
         if (
-          arrayData[0].State == "IA" ||
-          arrayData[0].State == "MN" ||
-          arrayData[0].State == "VT" ||
-          arrayData[0].State == "WI"
+          req.session.arrayData[0].State == "IA" ||
+          req.session.arrayData[0].State == "MN" ||
+          req.session.arrayData[0].State == "VT" ||
+          req.session.arrayData[0].State == "WI"
         ) {
           // console.log("It is working");
           // res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
@@ -735,13 +739,13 @@ app.post("/CardDetails", async (req, res) => {
             message: "Error State not Valid",
           });
         } else {
-          arrayData.push(cardInfo);
+          // arrayData.push(cardInfo);
           // console.log(arrayData);
           let parts = promo_ID.split("/");
           let number1 = parseInt(parts[0], 10);
           let number2 = parseInt(parts[1], 10);
           let stringPart = parts[2];
-          data = arrayData[2].cardExpiry.replace(/\//g, "");
+          data = req.session.arrayData[2].cardExpiry.replace(/\//g, "");
           var firstTwoDigits = parseInt(data.substring(0, 2));
           var lastTwoDigits = parseInt(data.substring(data.length - 2));
           const requestData = {
@@ -757,29 +761,29 @@ app.post("/CardDetails", async (req, res) => {
               },
             ],
 
-            email: arrayData[0].EmailId,
-            phone: arrayData[0].MobileNumber,
-            bill_fname: arrayData[0].FirstName,
-            bill_lname: arrayData[0].LastName,
+            email: req.session.arrayData[0].EmailId,
+            phone: req.session.arrayData[0].MobileNumber,
+            bill_fname: req.session.arrayData[0].FirstName,
+            bill_lname: req.session.arrayData[0].LastName,
             bill_country: "US",
-            bill_address1: arrayData[0].Address1,
-            bill_address2: arrayData[0].Address2,
-            bill_city: arrayData[0].City,
-            bill_state: arrayData[0].State,
-            bill_zipcode: arrayData[0].Pincode,
+            bill_address1: req.session.arrayData[0].Address1,
+            bill_address2: req.session.arrayData[0].Address2,
+            bill_city: req.session.arrayData[0].City,
+            bill_state: req.session.arrayData[0].State,
+            bill_zipcode: req.session.arrayData[0].Pincode,
             shipping_same: true, // Is the shipping address same as the billing address
             card_type_id:
-              arrayData[2].cardBrand == "MC"
+              req.session.arrayData[2].cardBrand == "MC"
                 ? 1
-                : arrayData[2].cardBrand == "VS"
+                : req.session.arrayData[2].cardBrand == "VS"
                 ? 2
-                : arrayData[2].cardBrand == "DS"
+                : req.session.arrayData[2].cardBrand == "DS"
                 ? 3
-                : arrayData[2].cardBrand == "AX"
+                : req.session.arrayData[2].cardBrand == "AX"
                 ? 4
                 : -1,
-            card_number: arrayData[2].cardNumber.replace(/-/g, ""),
-            card_cvv: parseInt(arrayData[2].cardCcv),
+            card_number: req.session.arrayData[2].cardNumber.replace(/-/g, ""),
+            card_cvv: parseInt(req.session.arrayData[2].cardCcv),
             card_exp_month: firstTwoDigits,
             card_exp_year: lastTwoDigits,
           };
@@ -788,7 +792,7 @@ app.post("/CardDetails", async (req, res) => {
             // console.log("Response:", response.data);
             // Handle successful response
             saveDataToMongoDB(
-              arrayData,
+              req.session.arrayData,
               "Success",
               req.user,
               "Project_02",
@@ -810,7 +814,7 @@ app.post("/CardDetails", async (req, res) => {
               // console.error("Response Data:", error.response.data);
               // console.error("Response Data : ", error.response.data.message);
               saveDataToMongoDB(
-                arrayData,
+                req.session.arrayData,
                 "Failure",
                 req.user,
                 "Project_02",
@@ -850,19 +854,19 @@ app.post("/CardDetails", async (req, res) => {
         // console.log(promo_ID);
         delete cardInfo.promo_id;
         // console.log(cardInfo);
-        arrayData.push(cardInfo);
+        // arrayData.push(cardInfo);
         // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
         // console.log(arrayData);
         let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
         // console.log(isDuplicate);
         if (isDuplicate == false) {
           try {
-            const result = await placeOrder(arrayData);
+            const result = await placeOrder(req.session.arrayData);
             console.log(result.data);
             if (result.success == true && result.data == "Success") {
-              saveData(req, arrayData, "Success");
+              saveData(req, req.session.arrayData, "Success");
               saveDataToMongoDB(
-                arrayData,
+                req.session.arrayData,
                 "Success",
                 req.user,
                 "Project_01",
@@ -871,7 +875,7 @@ app.post("/CardDetails", async (req, res) => {
               res.json({ message: "Data Recieved Successfully" });
             } else {
               saveDataToMongoDB(
-                arrayData,
+                req.session.arrayData,
                 "Failure",
                 req.user,
                 "Project_01",
