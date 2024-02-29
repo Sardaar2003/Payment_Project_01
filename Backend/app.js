@@ -82,7 +82,7 @@ const placeOrder = async (dynamicData) => {
     data: {
       type: "orders",
       attributes: {
-        promo_id: `${res.session.promo_ID}`,
+        promo_id: `${req.session.promo_ID}`,
         paymethod: dynamicData[2].cardBrand,
         card_number: dynamicData[2].cardNumber.replace(/-/g, ""),
         card_expiration: dynamicData[2].cardExpiry.replace(/\//g, ""),
@@ -454,7 +454,7 @@ const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
       cardExpiry: cardInfoPart.cardExpiry,
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
-      Promo_ID: res.session.promo_ID,
+      Promo_ID: req.session.promo_ID,
       Promo_type:
         promo == "ID Vault" ||
         promo == "Holiday Savers Online" ||
@@ -713,13 +713,13 @@ app.post("/CardDetails", async (req, res) => {
       traverseObject(cardInfoData, cardInfo);
       arrayData.push(cardInfo);
       req.session.arrayData = arrayData;
-      res.session.promo_ID = cardInfo.promo_id;
+      req.session.promo_ID = cardInfo.promo_id;
       // console.log(promo_ID.includes("/"));
       let number = req.session.arrayData[2].cardNumber;
       let phoneNum = req.session.arrayData[0].MobileNumber;
       let flag = false;
 
-      if (res.session.promo_ID.includes("/")) {
+      if (req.session.promo_ID.includes("/")) {
         if (
           req.session.arrayData[0].State == "IA" ||
           req.session.arrayData[0].State == "MN" ||
@@ -735,7 +735,7 @@ app.post("/CardDetails", async (req, res) => {
         } else {
           // arrayData.push(cardInfo);
           // console.log(arrayData);
-          let parts = res.session.promo_ID.split("/");
+          let parts = req.session.promo_ID.split("/");
           let number1 = parseInt(parts[0], 10);
           let number2 = parseInt(parts[1], 10);
           let stringPart = parts[2];
@@ -825,11 +825,11 @@ app.post("/CardDetails", async (req, res) => {
             } else if (error.request) {
               // The request was made but no response was received
               console.log("No response received:");
-              res.json({ message: "Error Occured" });
+              res.json({ message: "Error Occured Response Not Received" });
             } else {
               // Something happened in setting up the request that triggered an Error
               console.log("Error:");
-              res.json({ message: "Error Occured" });
+              res.json({ message: "Error Occured Triggered by response" });
             }
             return {
               success: false,
@@ -841,14 +841,14 @@ app.post("/CardDetails", async (req, res) => {
           }
         }
       } else {
-        if (res.session.promo_ID == "GHLT1425")
+        if (req.session.promo_ID == "GHLT1425")
           res.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
         else res.session.promo_type = "PROTECTION PROGRAM";
 
         delete cardInfo.promo_id;
 
         let isDuplicate = await checkDuplicateEntry(
-          res.session.promo_ID,
+          req.session.promo_ID,
           number,
           phoneNum
         );
@@ -881,8 +881,8 @@ app.post("/CardDetails", async (req, res) => {
               });
             }
           } catch (err) {
-            console.log("Error Occured : ");
-            res.json({ message: "Error Occured" });
+            console.log("Error Occured While Placing Orders ");
+            res.json({ message: "Error Occured While Placing Orders" });
           }
         } else {
           res.json({ message: "Duplicate Elements" });
@@ -890,7 +890,7 @@ app.post("/CardDetails", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("Error Occured : ");
-    res.json({ message: "Error Occured" });
+    console.log("Error Occured while executing the code : ");
+    res.json({ message: "Error Occured while Executing the code" });
   }
 });
