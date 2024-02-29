@@ -74,7 +74,7 @@ let userDataObj1 = {};
 let userDataObj2 = {};
 let cardInfo = {};
 
-const placeOrder = async (dynamicData) => {
+const placeOrder = async (dynamicData, req) => {
   const endpoint = "https://jsonapi.focalpoynt.com/v1/orders/";
   const apiToken = `${process.env.APITOKEN}`;
 
@@ -855,7 +855,7 @@ app.post("/CardDetails", async (req, res) => {
 
         if (isDuplicate == false) {
           try {
-            const result = await placeOrder(req.session.arrayData);
+            const result = await placeOrder(req.session.arrayData, req);
             console.log(result.data);
             if (result.success == true && result.data == "Success") {
               saveData(req, req.session.arrayData, "Success");
