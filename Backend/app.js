@@ -460,7 +460,7 @@ const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
         promo == "Holiday Savers Online" ||
         promo == "Savers Central Online"
           ? promo
-          : res.session.promo_type,
+          : req.session.promo_type,
       Project_Number: project,
     });
 
@@ -842,8 +842,8 @@ app.post("/CardDetails", async (req, res) => {
         }
       } else {
         if (req.session.promo_ID == "GHLT1425")
-          res.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
-        else res.session.promo_type = "PROTECTION PROGRAM";
+          req.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
+        else req.session.promo_type = "PROTECTION PROGRAM";
 
         delete cardInfo.promo_id;
 
