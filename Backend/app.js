@@ -426,7 +426,14 @@ const logDataSchema = new mongoose.Schema({
   Project_Number: String,
 });
 const LogData = mongoose.model("LogData", logDataSchema);
-const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
+const saveDataToMongoDB = async (
+  arrayData,
+  resp,
+  usern,
+  project,
+  promo,
+  req
+) => {
   try {
     const [billing, shipping, card] = arrayData;
     billingInfo = {};
@@ -794,7 +801,8 @@ app.post("/CardDetails", async (req, res) => {
                 ? "Savers Central Online"
                 : stringPart == "HS"
                 ? "Holiday Savers Online"
-                : "ID Vault"
+                : "ID Vault",
+              req
             );
             // console.log(response.data);
             // console.log(response.data.data);
@@ -816,7 +824,8 @@ app.post("/CardDetails", async (req, res) => {
                   ? "Savers Central Online"
                   : stringPart == "HS"
                   ? "Holiday Savers Online"
-                  : "ID Vault"
+                  : "ID Vault",
+                req
               );
               res.json({
                 message: "Data not Receieved",
@@ -864,7 +873,8 @@ app.post("/CardDetails", async (req, res) => {
                 "Success",
                 req.user,
                 "Project_01",
-                ""
+                "",
+                req
               );
               res.json({ message: "Data Recieved Successfully" });
             } else {
@@ -873,7 +883,8 @@ app.post("/CardDetails", async (req, res) => {
                 "Failure",
                 req.user,
                 "Project_01",
-                ""
+                "",
+                req
               );
               res.json({
                 message: "Data not Receieved",
