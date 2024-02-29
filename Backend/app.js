@@ -4,9 +4,7 @@ if (process.env.NODE_ENV !== "production") {
     console.error("Error loading .env file:", result.error);
   }
 }
-let promo_ID;
-// console.log(process.env.MONGODBKEY);
-// console.log(process.env.APITOKEN);
+
 const express = require("express");
 const excel = require("exceljs");
 const fs = require("fs");
@@ -53,7 +51,6 @@ const preDefinedReferalCode = [
   "JUsBHKQsvSKhN69ujyWq",
   "dGmgmAo75tBux8l94EpG",
 ];
-// const MONG_URL = "mongodb://127.0.0.1:27017/InformationData";
 
 const run = async () => {
   const MONG_URL = `mongodb+srv://singhmantej536:${process.env.MONGODBKEY}@paymentgate.rs63o6h.mongodb.net/?retryWrites=true&w=majority`;
@@ -79,13 +76,13 @@ let cardInfo = {};
 
 const placeOrder = async (dynamicData) => {
   const endpoint = "https://jsonapi.focalpoynt.com/v1/orders/";
-  const apiToken = `${process.env.APITOKEN}`; // Replace with your actual API token
+  const apiToken = `${process.env.APITOKEN}`;
 
   const dataToSend = {
     data: {
       type: "orders",
       attributes: {
-        promo_id: `${promo_ID}`,
+        promo_id: `${res.session.promo_ID}`,
         paymethod: dynamicData[2].cardBrand,
         card_number: dynamicData[2].cardNumber.replace(/-/g, ""),
         card_expiration: dynamicData[2].cardExpiry.replace(/\//g, ""),
@@ -153,15 +150,13 @@ const placeOrder = async (dynamicData) => {
 
   try {
     const response = await axios.post(endpoint, dataToSend, { headers });
-    // console.log(response.data);
+
     return {
       success: true,
       message: "Order Successfully Placed",
       data: "Success",
     };
   } catch (error) {
-    // console.error(error.response.data);
-    // console.error(error.response.data);
     return {
       success: false,
       message: "Error placing the order",
@@ -173,10 +168,8 @@ function traverseObject(obj, userData) {
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
       if (typeof obj[key] === "object") {
-        // If the value is an object, recursively traverse it
         traverseObject(obj[key], userData);
       } else {
-        // If the value is not an object, set the variable value in the userData object
         userData[key] = obj[key];
       }
     }
@@ -333,7 +326,7 @@ app.post("/signUpDom", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-let promo_type;
+
 app.post("/OrderInfo", isAuthenticated, (req, res) => {
   if (req.isAuthenticated()) {
     const combinedData = req.body;
@@ -461,13 +454,13 @@ const saveDataToMongoDB = async (arrayData, resp, usern, project, promo) => {
       cardExpiry: cardInfoPart.cardExpiry,
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
-      Promo_ID: promo_ID,
+      Promo_ID: res.session.promo_ID,
       Promo_type:
         promo == "ID Vault" ||
         promo == "Holiday Savers Online" ||
         promo == "Savers Central Online"
           ? promo
-          : promo_type,
+          : res.session.promo_type,
       Project_Number: project,
     });
 
@@ -678,9 +671,10 @@ const checkDuplicateEntry = async (promoId, cardNumber, phoneNum) => {
   try {
     // Perform a query to check for duplicates
     const existingEntry = await LogData.findOne({
-      Promo_ID: promoId,
+      // Promo_ID: promoId,
       cardNumber: cardNumber,
       mobileNumber: phoneNum,
+      response: "Success",
     });
 
     // If a duplicate entry is found, return true
@@ -719,13 +713,13 @@ app.post("/CardDetails", async (req, res) => {
       traverseObject(cardInfoData, cardInfo);
       arrayData.push(cardInfo);
       req.session.arrayData = arrayData;
-      promo_ID = cardInfo.promo_id;
+      res.session.promo_ID = cardInfo.promo_id;
       // console.log(promo_ID.includes("/"));
       let number = req.session.arrayData[2].cardNumber;
       let phoneNum = req.session.arrayData[0].MobileNumber;
       let flag = false;
 
-      if (promo_ID.includes("/")) {
+      if (res.session.promo_ID.includes("/")) {
         if (
           req.session.arrayData[0].State == "IA" ||
           req.session.arrayData[0].State == "MN" ||
@@ -741,7 +735,7 @@ app.post("/CardDetails", async (req, res) => {
         } else {
           // arrayData.push(cardInfo);
           // console.log(arrayData);
-          let parts = promo_ID.split("/");
+          let parts = res.session.promo_ID.split("/");
           let number1 = parseInt(parts[0], 10);
           let number2 = parseInt(parts[1], 10);
           let stringPart = parts[2];
@@ -847,18 +841,18 @@ app.post("/CardDetails", async (req, res) => {
           }
         }
       } else {
-        if (promo_ID == "GHLT1425")
-          // console.log(promo_ID, " ", number, " ", phoneNum);
-          promo_type = "HEALTH AND WELLNESS PROGRAM";
-        else promo_type = "PROTECTION PROGRAM";
-        // console.log(promo_ID);
+        if (res.session.promo_ID == "GHLT1425")
+          res.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
+        else res.session.promo_type = "PROTECTION PROGRAM";
+
         delete cardInfo.promo_id;
-        // console.log(cardInfo);
-        // arrayData.push(cardInfo);
-        // console.log(checkDuplicateEntry(promo_ID, number, phoneNum));
-        // console.log(arrayData);
-        let isDuplicate = await checkDuplicateEntry(promo_ID, number, phoneNum);
-        // console.log(isDuplicate);
+
+        let isDuplicate = await checkDuplicateEntry(
+          res.session.promo_ID,
+          number,
+          phoneNum
+        );
+
         if (isDuplicate == false) {
           try {
             const result = await placeOrder(req.session.arrayData);
@@ -891,11 +885,8 @@ app.post("/CardDetails", async (req, res) => {
             res.json({ message: "Error Occured" });
           }
         } else {
-          // res.redirect("/failDB");
           res.json({ message: "Duplicate Elements" });
-          // return;
         }
-        // res.redirect("/home");
       }
     }
   } catch (err) {
