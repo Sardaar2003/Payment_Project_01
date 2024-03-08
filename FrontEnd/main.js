@@ -128,6 +128,10 @@ btn.addEventListener("click", () => {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
         window.location.href = "./generalError.html";
+      } else if (data.message == "Maximum Attempts Reached") {
+        btn.disabled = false;
+        btn.innerHTML = "SUBMIT";
+        window.location.href = "./Attempts.html";
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
