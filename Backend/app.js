@@ -687,7 +687,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
   try {
     const authorizedUser = ["Sameer", "ashishrane", "Gurtej"];
     const userId = req.user._id; // Fetch all log data from MongoDB
-    if (authorizedUser == userId) {
+    if (authorizedUser.includes(userId)) {
       const allLogData = await LogData.find();
       // Create a new workbook and add a worksheet
       const workbook = new excel.Workbook();
