@@ -514,7 +514,9 @@ app.post(
     failureFlash: true,
   }),
   async (req, res) => {
+    // console.log(req.body);
     if (req.isAuthenticated()) {
+      req.session.User = req.body.username;
       res.redirect("/new");
     } else {
       res.redirect("/login");
@@ -556,7 +558,7 @@ app.post("/signUpDom", async (req, res) => {
         const newUser = new User({ email: emailId, username });
         const registeredUser = await User.register(newUser, passWOrd);
         console.log(registeredUser);
-        res.redirect("/success");
+        res.redirect("/succesSignUp");
       }
     } else {
       res
@@ -686,7 +688,7 @@ app.get("/projectManagement", async (req, res) => {
 app.get("/insertDataAndDownload", async (req, res) => {
   try {
     const authorizedUser = ["Sameer", "ashishrane", "Gurtej"];
-    const userId = req.user._id; // Fetch all log data from MongoDB
+    const userId = req.session.User; // Fetch all log data from MongoDB
     if (authorizedUser.includes(userId)) {
       const allLogData = await LogData.find();
       // Create a new workbook and add a worksheet
@@ -770,6 +772,11 @@ app.get("/insertDataAndDownload", async (req, res) => {
 // Error Page
 app.get("/getInfo", (req, res) => {
   res.sendFile(path.join(__dirname, "../FrontEnd", "errorPage.html"));
+});
+
+// Successful signup
+app.get("/succesSignUp", (req, res) => {
+  res.sendFile(path.join(__dirname, "../FrontEnd", "succesfullLogged.html"));
 });
 
 //General Error Page
