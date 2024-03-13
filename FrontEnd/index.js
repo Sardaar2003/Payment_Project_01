@@ -1,7 +1,6 @@
 let checkbx = document.getElementById("BillingDiff");
 const projectRadios = document.querySelectorAll('input[name="project"]');
 const infoDiv = document.querySelector(".Info");
-// infoDiv.style.display = "block";
 infoDiv.classList.add("hide");
 function toggleInfoVisibility() {
   if (projectRadios[0].checked) {
@@ -10,6 +9,10 @@ function toggleInfoVisibility() {
   } else if (projectRadios[1].checked) {
     infoDiv.classList.remove("hide");
     radioButton1.disabled = true; // Disable the first radio button
+  } else if (projectRadios[2].checked) {
+    infoDiv.classList.remove("hide");
+    radioButton1.disabled = true; // Disable the first radio button
+    radioButton2.disabled = true;
   } else {
     infoDiv.classList.add("hide");
     radioButton1.disabled = false; // Enable the first radio button
@@ -21,10 +24,8 @@ projectRadios.forEach((radio) => {
 });
 let shipContainer = document.getElementsByClassName("shipContainer")[0];
 let button = document.querySelector("button");
-// let radioBtn = document.getElementById("name-error");
 const radioButton1 = document.getElementById("project01");
 const radioButton2 = document.getElementById("project02");
-// const radio = radioButton1.checked == true ? "01" : "02";
 let nameError = document.getElementById("name-error");
 let nameError1 = document.getElementById("name-error-1");
 let nameError2 = document.getElementById("name-error-2");
@@ -53,6 +54,13 @@ shipContainer.classList.add("hide");
 function validateName() {
   const fnameInp = document.getElementById("fnameInput").value;
   const data = document.getElementById("fnameInput");
+  if (projectRadios[2].checked == true) {
+    if (fnameInp == "") {
+      nameError.innerHTML = "";
+      data.style.border = "2px solid green";
+      return true;
+    }
+  }
   if (fnameInp == "") {
     nameError.innerHTML = "NAME IS REQUIRED";
     data.style.border = "2px solid red";
@@ -63,12 +71,8 @@ function validateName() {
     data.style.border = "2px solid red";
     return false;
   }
-  // nameError.innerHTML = '<i class="fa-solid fa-circle-check"></i>'
-  // data.style.borderBottomColor = "green";
-  // data.style.color = "green";
   nameError.innerHTML = "";
   data.style.border = "2px solid green";
-  // data.style.fontSize = "0rem";
   return true;
 }
 function validateShipName() {
@@ -92,6 +96,7 @@ function validateShipName() {
 function validateLName() {
   const lnameInp = document.getElementById("lnameInput").value;
   const data = document.getElementById("lnameInput");
+
   if (lnameInp == "") {
     nameError1.innerHTML = "NAME IS REQUIRED";
     data.style.border = "2px solid red";
@@ -102,12 +107,8 @@ function validateLName() {
     data.style.border = "2px solid red";
     return false;
   }
-  // nameError.innerHTML = '<i class="fa-solid fa-circle-check"></i>'
-  // data.style.borderBottomColor = "green";
-  // data.style.color = "green";
   nameError1.innerHTML = "";
   data.style.border = "2px solid green";
-  // data.style.fontSize = "0rem";
   return true;
 }
 function validateShipLName() {
@@ -135,7 +136,13 @@ function validateDName() {
   const dob = document.getElementById("DOBInput").value;
   const data = document.getElementById("DOBInput");
   const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-
+  if (projectRadios[2].checked == true) {
+    if (dob == "") {
+      nameError2.innerHTML = "";
+      data.style.border = "2px solid green";
+      return true;
+    }
+  }
   if (radioButton1.checked == true) {
     if (dob === "") {
       nameError2.innerHTML = "DOB IS REQUIRED";
@@ -205,7 +212,11 @@ function validateShipAdName() {
 function validateAddName() {
   const add2Inp = document.getElementById("add2Input").value;
   const data = document.getElementById("add2Input");
-  if (add2Inp === "") return true;
+  if (add2Inp === "") {
+    nameError4.innerHTML = "";
+    data.style.border = "2px solid green";
+    return true;
+  }
   if (!add2Inp.match(/^[0-9a-zA-Z\s,]{1,50}$/)) {
     nameError4.innerHTML = "Length range is 1 to 50";
     data.style.border = "2px solid red";
@@ -213,7 +224,6 @@ function validateAddName() {
   }
   nameError4.innerHTML = "";
   data.style.border = "2px solid green";
-  // data.style.fontSize = "0rem";
   return true;
 }
 function validateShipAddName() {
@@ -237,6 +247,13 @@ function validateShipAddName() {
 function validateCity() {
   const cityInp = document.getElementById("cityInput").value;
   const data = document.getElementById("cityInput");
+  if (projectRadios[2].checked == true) {
+    if (cityInp == "") {
+      nameError5.innerHTML = "";
+      data.style.border = "2px solid green";
+      return true;
+    }
+  }
   if (cityInp == "") {
     nameError5.innerHTML = "CITY IS REQUIRED";
     data.style.border = "2px solid red";
@@ -339,6 +356,7 @@ function validateShipCountry() {
 function validatePincode() {
   const pinCodeInp = document.getElementById("pinCodeInput").value;
   const data = document.getElementById("pinCodeInput");
+
   if (pinCodeInp == "") {
     nameError9.innerHTML = "PINCODE IS REQUIRED";
     data.style.border = "2px solid red";
@@ -373,6 +391,13 @@ function validateShipPincode() {
 function validateMobile() {
   const mobileInp = document.getElementById("mobileInput").value;
   const data = document.getElementById("mobileInput");
+  if (projectRadios[2].checked == true) {
+    if (mobileInp == "") {
+      nameError10.innerHTML = "";
+      data.style.border = "2px solid green";
+      return true;
+    }
+  }
   if (mobileInp == "") {
     nameError10.innerHTML = "MOBILE NUMBER IS REQUIRED";
     data.style.border = "2px solid red";
@@ -407,6 +432,13 @@ function validateShipMobile() {
 function validateEmail() {
   const emailInp = document.getElementById("emailInput").value;
   const data = document.getElementById("emailInput");
+  if (projectRadios[2].checked == true) {
+    if (emailInp == "") {
+      nameError11.innerHTML = "";
+      data.style.border = "2px solid green";
+      return true;
+    }
+  }
   if (radioButton2.checked == true) {
     if (emailInp === "") {
       nameError11.innerHTML = "EMAIL ID IS REQUIRED";
@@ -442,25 +474,6 @@ function validateShipEmail() {
   return true;
 }
 function submitForm() {
-  // if (
-  //   validateName() &&
-  //   validateLName() &&
-  //   validateAdName() &&
-  //   validateCity() &&
-  //   validateState() &&
-  //   validateCountry() &&
-  //   validatePincode() &&
-  //   validateMobile()
-  // ) {
-  //   if (radio == "01") {
-  //     return !validateDName() ? true : false;
-  //   } else {
-  //     return !validateEmail() ? true : false;
-  //   }
-  // } else {
-  //   submitError.innerHTML = "Fix the necessary Errors";
-  //   return false;
-  // }
   if (
     !validateAdName() ||
     !validateCity() ||
@@ -507,13 +520,8 @@ checkbx.addEventListener("click", () => {
   }
 });
 function convertDateFormat(inputDate) {
-  // Split the input date into day, month, and year
   const dateParts = inputDate.split("-");
-  // console.log(dateParts);
-  // Rearrange the date parts to the desired format "mm-dd-yyyy"
   const formattedDate = `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
-  // console.log(formattedDate);
-
   return formattedDate;
 }
 
@@ -530,7 +538,6 @@ button.addEventListener("click", () => {
   const pinCodeInp = document.getElementById("pinCodeInput");
   const mobileInp = document.getElementById("mobileInput");
   const emailInp = document.getElementById("emailInput");
-  // console.log(dob.value);
   if (
     (checkbx.checked == false && submitForm()) ||
     (checkbx.checked == true && submitShipForm() && submitForm())
@@ -549,8 +556,6 @@ button.addEventListener("click", () => {
       MobileNumber: mobileInp.value,
       EmailId: emailInp.value,
     };
-    // console.log(`Data : ${formData}`);
-    // var shippingData;
     let shippingData, formData2;
     const BillingData = JSON.stringify(formData, null, 2);
     if (checkbx.checked == false) {
@@ -570,7 +575,6 @@ button.addEventListener("click", () => {
       };
     } else {
       const shipFnameInp = document.getElementById("ship-fnameInput");
-
       const shipLnameInp = document.getElementById("ship-lnameInput");
       const shipGender = document.getElementById("ship-sexInput");
       const shipDOB = document.getElementById("ship-DOBInput");
@@ -596,11 +600,8 @@ button.addEventListener("click", () => {
         ShipMobileNumber: shipMobileInp.value,
         ShipEmailId: shipEmailInp.value,
       };
-      // console.log(typeof shipDOB.value);
     }
     shippingData = JSON.stringify(formData2, null, 2);
-    // console.log(`Billing Data : ${BillingData}`);
-    // console.log(`Shipping Data : ${shippingData}`);
     const combinedFormData = { data1: BillingData, data2: shippingData };
     fetch("/OrderInfo", {
       method: "POST",

@@ -62,6 +62,7 @@ btn.addEventListener("click", () => {
   const saverCentral = document.getElementById("saverscentral");
   const holidayStay = document.getElementById("holiday");
   const idvault = document.getElementById("idv");
+  const proj03 = document.getElementById("p3");
   if (dazzleRadio.checked == true) {
     stor = dazzleRadio.value;
   } else {
@@ -71,14 +72,13 @@ btn.addEventListener("click", () => {
       stor = saverCentral.value;
     } else if (holidayStay.checked == true) {
       stor = holidayStay.value;
+    } else if (proj03.checked == true) {
+      stor = proj03.value;
     } else {
       stor = idvault.value;
     }
   }
-  console.log(stor);
-  // console.log(
-  //   ` Card Number : ${cardN} \n Card Exp : ${cardEx} \n Card CCV : ${cardCCV}`
-  // );
+  // console.log(stor);
   const cardBrand = document.getElementById("card__brand").className;
   var cardbrand;
   if (cardBrand == "fab fa-cc-visa") {
@@ -140,7 +140,6 @@ btn.addEventListener("click", () => {
           errors: JSON.stringify(data.Error),
         });
         window.location.href = `./failure.html?${queryParams.toString()}`;
-        // window.location.href = "./failure.html";
       }
     })
     .catch((err) => {

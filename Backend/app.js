@@ -5,8 +5,12 @@ if (process.env.NODE_ENV !== "production") {
     console.error("Error loading .env file:", result.error);
   }
 }
-
 // Importing the necessary
+const fetch = require("cross-fetch");
+const xmlbuilder = require("xmlbuilder");
+// const { parseStringPromise } = require("xml2js");
+const util = require("util");
+const parseString = util.promisify(require("xml2js").parseString);
 const express = require("express");
 const excel = require("exceljs");
 const fs = require("fs");
@@ -207,6 +211,43 @@ const placeOrder = async (dynamicData, req) => {
     };
   }
 };
+
+async function checkCustomerEligibility(lastName, street, state, zip, bin) {
+  const url = "https://radius-dev.com/xml";
+  const apiKey = `${process.env.Project03_API}`;
+
+  const xmlRequest = xmlbuilder
+    .create("disposition")
+    .ele("field", { id: "key", value: apiKey })
+    .up()
+    .ele("field", { id: "name", value: lastName })
+    .up()
+    .ele("field", { id: "address", value: street })
+    .up()
+    .ele("field", { id: "state", value: state })
+    .up()
+    .ele("field", { id: "zip", value: zip })
+    .up()
+    .ele("field", { id: "bin", value: bin.padEnd(10, "0") })
+    .end({ pretty: false });
+
+  try {
+    // Making API request
+    const response = await fetch(url, {
+      method: "POST",
+      body: xmlRequest,
+      headers: {
+        "Content-Type": "application/xml",
+      },
+    });
+
+    // Parsing response as text
+    const responseData = await response.text();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 
 //Autheticating the user
 function isAuthenticated(req, res, next) {
@@ -798,94 +839,172 @@ app.post("/CardDetails", async (req, res) => {
       let number = req.session.arrayData[2].cardNumber;
       let phoneNum = req.session.arrayData[0].MobileNumber;
       let flag = false;
-
-      if (req.session.promo_ID.includes("/")) {
+      if (req.session.promo_ID == "project03") {
         if (
-          req.session.arrayData[0].State == "IA" ||
-          req.session.arrayData[0].State == "MN" ||
-          req.session.arrayData[0].State == "VT" ||
-          req.session.arrayData[0].State == "WI"
+          await checkNumberOfAttempts(req.session.promo_ID, number, phoneNum)
         ) {
-          res.json({
-            message: "Error State not Valid",
-          });
-        } else {
-          let parts = req.session.promo_ID.split("/");
-          let number1 = parseInt(parts[0], 10);
-          let number2 = parseInt(parts[1], 10);
-          let stringPart = parts[2];
-          data = req.session.arrayData[2].cardExpiry.replace(/\//g, "");
-          var firstTwoDigits = parseInt(data.substring(0, 2));
-          var lastTwoDigits = parseInt(data.substring(data.length - 2));
-          console.log("Phone Number : ", phoneNum);
-          console.log("Number : ", number);
-          if (
-            await checkNumberOfAttempts(req.session.promo_ID, number, phoneNum)
-          ) {
-            res.json({ message: "Maximum Attempts Reached" });
-            return;
-          } else {
-            const requestData = {
-              user_id: `${process.env.USR_ID}`,
-              user_password: `${process.env.USR_PWD}`,
-              connection_id: 1,
-              payment_method_id: 1, // Fixed at 1
-              campaign_id: number1,
-              offers: [
-                {
-                  offer_id: number2,
-                  order_offer_quantity: 1,
-                },
-              ],
-              email: req.session.arrayData[0].EmailId,
-              phone: req.session.arrayData[0].MobileNumber,
-              bill_fname: req.session.arrayData[0].FirstName,
-              bill_lname: req.session.arrayData[0].LastName,
-              bill_country: "US",
-              bill_address1: req.session.arrayData[0].Address1,
-              bill_address2: req.session.arrayData[0].Address2,
-              bill_city: req.session.arrayData[0].City,
-              bill_state: req.session.arrayData[0].State,
-              bill_zipcode: req.session.arrayData[0].Pincode,
-              shipping_same: true, // Is the shipping address same as the billing address
-              card_type_id:
-                req.session.arrayData[2].cardBrand == "MC"
-                  ? 1
-                  : req.session.arrayData[2].cardBrand == "VS"
-                  ? 2
-                  : req.session.arrayData[2].cardBrand == "DS"
-                  ? 3
-                  : req.session.arrayData[2].cardBrand == "AX"
-                  ? 4
-                  : -1,
-              card_number: req.session.arrayData[2].cardNumber.replace(
-                /-/g,
-                ""
-              ),
-              card_cvv: parseInt(req.session.arrayData[2].cardCcv),
-              card_exp_month: firstTwoDigits,
-              card_exp_year: lastTwoDigits,
-            };
-            try {
-              const response = await axios.post(apiUrl, requestData);
+          res.json({ message: "Maximum Attempts Reached" });
+          return;
+        }
+        try {
+          const cardNumberWithDashes = req.session.arrayData[2].cardNumber;
+          const cardNumberWithoutDashes = cardNumberWithDashes.replace(
+            /-/g,
+            ""
+          );
+          const first10Digits = cardNumberWithoutDashes.substring(0, 10);
+          console.log(first10Digits);
+          const responseData = await checkCustomerEligibility(
+            req.session.arrayData[0].LastName,
+            req.session.arrayData[0].Address1,
+            req.session.arrayData[0].State,
+            req.session.arrayData[0].Pincode,
+            first10Digits
+          );
+          console.log(responseData);
+          // Parsing XML response using promisified parseString
+          const parsedData = await parseString(responseData);
+          console.log(parsedData.results["$"].status);
+          console.log(parsedData.results["$"].message);
+          console.log(typeof parsedData.results["$"].status);
+          console.log(typeof parsedData.results["$"].message);
+
+          // Checking response status
+          if (parsedData.results["$"].status === "0") {
+            saveDataToMongoDB(
+              req.session.arrayData,
+              "Failure",
+              req.user,
+              "Project_03",
+              "Project03",
+              req
+            );
+            console.log(`Error: ${parsedData.results["$"].message}`);
+            return res.json({
+              message: "Data not Receieved",
+              Error: parsedData.results["$"].message,
+            });
+          } else if (parsedData.results["$"].status === "1") {
+            if (parsedData.results["$"].message === "true") {
               saveDataToMongoDB(
                 req.session.arrayData,
                 "Success",
                 req.user,
-                "Project_02",
-                stringPart == "SC"
-                  ? "Savers Central Online"
-                  : stringPart == "HS"
-                  ? "Holiday Savers Online"
-                  : "ID Vault",
+                "Project_03",
+                "Project03",
                 req
               );
               return res.json({ message: "Data Recieved Successfully" });
-            } catch (error) {
-              if (error.response) {
+            } else {
+              console.log(`Blocked: ${parsedData.results["$"].message}`);
+              saveDataToMongoDB(
+                req.session.arrayData,
+                "Failure",
+                req.user,
+                "Project_03",
+                "Project03",
+                req
+              );
+              return res.json({
+                message: "Data not Receieved",
+                Error: parsedData.results["$"].message,
+              });
+            }
+          } else {
+            console.log("Unknown response status");
+            saveDataToMongoDB(
+              req.session.arrayData,
+              "Failure",
+              req.user,
+              "Project_03",
+              "Project03",
+              req
+            );
+            return res.json({
+              message: "Data not Receieved",
+              Error: "Unknown response status",
+            });
+          }
+        } catch (err) {
+          console.log(`Unexpected Error Occured : ${err} `);
+        }
+      } else {
+        if (req.session.promo_ID.includes("/")) {
+          if (
+            req.session.arrayData[0].State == "IA" ||
+            req.session.arrayData[0].State == "MN" ||
+            req.session.arrayData[0].State == "VT" ||
+            req.session.arrayData[0].State == "WI"
+          ) {
+            res.json({
+              message: "Error State not Valid",
+            });
+          } else {
+            let parts = req.session.promo_ID.split("/");
+            let number1 = parseInt(parts[0], 10);
+            let number2 = parseInt(parts[1], 10);
+            let stringPart = parts[2];
+            data = req.session.arrayData[2].cardExpiry.replace(/\//g, "");
+            var firstTwoDigits = parseInt(data.substring(0, 2));
+            var lastTwoDigits = parseInt(data.substring(data.length - 2));
+            console.log("Phone Number : ", phoneNum);
+            console.log("Number : ", number);
+            if (
+              await checkNumberOfAttempts(
+                req.session.promo_ID,
+                number,
+                phoneNum
+              )
+            ) {
+              res.json({ message: "Maximum Attempts Reached" });
+              return;
+            } else {
+              const requestData = {
+                user_id: `${process.env.USR_ID}`,
+                user_password: `${process.env.USR_PWD}`,
+                connection_id: 1,
+                payment_method_id: 1, // Fixed at 1
+                campaign_id: number1,
+                offers: [
+                  {
+                    offer_id: number2,
+                    order_offer_quantity: 1,
+                  },
+                ],
+                email: req.session.arrayData[0].EmailId,
+                phone: req.session.arrayData[0].MobileNumber,
+                bill_fname: req.session.arrayData[0].FirstName,
+                bill_lname: req.session.arrayData[0].LastName,
+                bill_country: "US",
+                bill_address1: req.session.arrayData[0].Address1,
+                bill_address2: req.session.arrayData[0].Address2,
+                bill_city: req.session.arrayData[0].City,
+                bill_state: req.session.arrayData[0].State,
+                bill_zipcode: req.session.arrayData[0].Pincode,
+                shipping_same: true, // Is the shipping address same as the billing address
+                card_type_id:
+                  req.session.arrayData[2].cardBrand == "MC"
+                    ? 1
+                    : req.session.arrayData[2].cardBrand == "VS"
+                    ? 2
+                    : req.session.arrayData[2].cardBrand == "DS"
+                    ? 3
+                    : req.session.arrayData[2].cardBrand == "AX"
+                    ? 4
+                    : -1,
+                card_number: req.session.arrayData[2].cardNumber.replace(
+                  /-/g,
+                  ""
+                ),
+                card_cvv: parseInt(req.session.arrayData[2].cardCcv),
+                card_exp_month: firstTwoDigits,
+                card_exp_year: lastTwoDigits,
+              };
+              try {
+                const response = await axios.post(apiUrl, requestData);
                 saveDataToMongoDB(
                   req.session.arrayData,
-                  "Failure",
+                  "Success",
                   req.user,
                   "Project_02",
                   stringPart == "SC"
@@ -895,86 +1014,102 @@ app.post("/CardDetails", async (req, res) => {
                     : "ID Vault",
                   req
                 );
-                res.json({
-                  message: "Data not Receieved",
-                  Error: error.response.data.message,
-                });
-              } else if (error.request) {
-                // The request was made but no response was received
-                console.log("No response received:");
-                res.json({ message: "Error Occured Response Not Received" });
-              } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log("Error:");
-                res.json({ message: "Error Occured Triggered by response" });
+                return res.json({ message: "Data Recieved Successfully" });
+              } catch (error) {
+                if (error.response) {
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Failure",
+                    req.user,
+                    "Project_02",
+                    stringPart == "SC"
+                      ? "Savers Central Online"
+                      : stringPart == "HS"
+                      ? "Holiday Savers Online"
+                      : "ID Vault",
+                    req
+                  );
+                  res.json({
+                    message: "Data not Receieved",
+                    Error: error.response.data.message,
+                  });
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  console.log("No response received:");
+                  res.json({ message: "Error Occured Response Not Received" });
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.log("Error:");
+                  res.json({ message: "Error Occured Triggered by response" });
+                }
+                return {
+                  success: false,
+                  message: "Error placing the order",
+                  error: error.response
+                    ? error.response.data
+                    : "No response from server",
+                };
               }
-              return {
-                success: false,
-                message: "Error placing the order",
-                error: error.response
-                  ? error.response.data
-                  : "No response from server",
-              };
             }
           }
-        }
-      } else {
-        if (req.session.promo_ID == "GHLT1425")
-          req.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
-        else req.session.promo_type = "PROTECTION PROGRAM";
-        delete cardInfo.promo_id;
-        console.log("Phone Number : ", phoneNum);
-        console.log("Number : ", number);
-        let isDuplicate = await checkDuplicateEntry(
-          req.session.promo_ID,
-          number,
-          phoneNum
-        );
-        if (isDuplicate == false) {
-          let attemptsData = await checkNumberOfAttempts(
+        } else {
+          if (req.session.promo_ID == "GHLT1425")
+            req.session.promo_type = "HEALTH AND WELLNESS PROGRAM";
+          else req.session.promo_type = "PROTECTION PROGRAM";
+          delete cardInfo.promo_id;
+          console.log("Phone Number : ", phoneNum);
+          console.log("Number : ", number);
+          let isDuplicate = await checkDuplicateEntry(
             req.session.promo_ID,
             number,
             phoneNum
           );
-          console.log(attemptsData);
-          if (attemptsData == false) {
-            try {
-              const result = await placeOrder(req.session.arrayData, req);
-              console.log(result.data);
-              if (result.success == true && result.data == "Success") {
-                saveData(req, req.session.arrayData, "Success");
-                saveDataToMongoDB(
-                  req.session.arrayData,
-                  "Success",
-                  req.user,
-                  "Project_01",
-                  "",
-                  req
-                );
-                res.json({ message: "Data Recieved Successfully" });
-              } else {
-                saveDataToMongoDB(
-                  req.session.arrayData,
-                  "Failure",
-                  req.user,
-                  "Project_01",
-                  "",
-                  req
-                );
-                res.json({
-                  message: "Data not Receieved",
-                  Error: result.data,
-                });
+          if (isDuplicate == false) {
+            let attemptsData = await checkNumberOfAttempts(
+              req.session.promo_ID,
+              number,
+              phoneNum
+            );
+            console.log(attemptsData);
+            if (attemptsData == false) {
+              try {
+                const result = await placeOrder(req.session.arrayData, req);
+                console.log(result.data);
+                if (result.success == true && result.data == "Success") {
+                  saveData(req, req.session.arrayData, "Success");
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Success",
+                    req.user,
+                    "Project_01",
+                    "",
+                    req
+                  );
+                  res.json({ message: "Data Recieved Successfully" });
+                } else {
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Failure",
+                    req.user,
+                    "Project_01",
+                    "",
+                    req
+                  );
+                  res.json({
+                    message: "Data not Receieved",
+                    Error: result.data,
+                  });
+                }
+              } catch (err) {
+                console.log("Error Occured While Placing Orders ");
+                res.json({ message: "Error Occured While Placing Orders" });
               }
-            } catch (err) {
-              console.log("Error Occured While Placing Orders ");
-              res.json({ message: "Error Occured While Placing Orders" });
+            } else {
+              res.json({ message: "Maximum Attempts Reached" });
             }
           } else {
-            res.json({ message: "Maximum Attempts Reached" });
+            res.json({ message: "Duplicate Elements" });
           }
-        } else {
-          res.json({ message: "Duplicate Elements" });
         }
       }
     }
