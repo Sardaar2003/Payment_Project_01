@@ -444,13 +444,19 @@ const logDataSchema = new mongoose.Schema({
 });
 
 //Attempts Checking :
-const checkNumberOfAttempts = async (promoId, cardNumber, phoneNum) => {
+const checkNumberOfAttempts = async (
+  promoId,
+  cardNumber,
+  phoneNum,
+  projNum
+) => {
   try {
     // Perform a query to check for duplicates
     const existingEntry1 = await LogData.countDocuments({
       // Promo_ID: promoId,
       cardNumber: cardNumber,
       mobileNumber: phoneNum,
+      Project_Number: projNum,
     });
     console.log(existingEntry1);
 
@@ -841,7 +847,12 @@ app.post("/CardDetails", async (req, res) => {
       let flag = false;
       if (req.session.promo_ID == "project03") {
         if (
-          await checkNumberOfAttempts(req.session.promo_ID, number, phoneNum)
+          await checkNumberOfAttempts(
+            req.session.promo_ID,
+            number,
+            phoneNum,
+            "Project_03"
+          )
         ) {
           res.json({ message: "Maximum Attempts Reached" });
           return;
@@ -953,7 +964,8 @@ app.post("/CardDetails", async (req, res) => {
               await checkNumberOfAttempts(
                 req.session.promo_ID,
                 number,
-                phoneNum
+                phoneNum,
+                "Project_02"
               )
             ) {
               res.json({ message: "Maximum Attempts Reached" });
@@ -1068,7 +1080,8 @@ app.post("/CardDetails", async (req, res) => {
             let attemptsData = await checkNumberOfAttempts(
               req.session.promo_ID,
               number,
-              phoneNum
+              phoneNum,
+              "Project_01"
             );
             console.log(attemptsData);
             if (attemptsData == false) {
