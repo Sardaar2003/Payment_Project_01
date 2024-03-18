@@ -890,7 +890,7 @@ app.post("/CardDetails", async (req, res) => {
                   apiKey: `${process.env.YMA_API}`,
                 },
               });
-              console.log(response.data);
+              console.log(response);
               if (response.data.success == true) {
                 return res.json({ message: "Data Recieved Successfully" });
               } else {
