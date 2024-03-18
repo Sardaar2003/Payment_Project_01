@@ -63,6 +63,8 @@ btn.addEventListener("click", () => {
   const holidayStay = document.getElementById("holiday");
   const idvault = document.getElementById("idv");
   const proj03 = document.getElementById("p3");
+  const yma = document.getElementById("yma");
+  const weod = document.getElementById("weod");
   if (dazzleRadio.checked == true) {
     stor = dazzleRadio.value;
   } else {
@@ -74,6 +76,10 @@ btn.addEventListener("click", () => {
       stor = holidayStay.value;
     } else if (proj03.checked == true) {
       stor = proj03.value;
+    } else if (yma.checked == true) {
+      stor = yma.value;
+    } else if (weod.checked == true) {
+      stor = weod.value;
     } else {
       stor = idvault.value;
     }

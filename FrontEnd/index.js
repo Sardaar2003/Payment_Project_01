@@ -6,17 +6,29 @@ function toggleInfoVisibility() {
   if (projectRadios[0].checked) {
     infoDiv.classList.remove("hide");
     radioButton2.disabled = true; // Disable the second radio button
+    radioButton3.disabled = true;
+    radioButton4.disabled = true;
   } else if (projectRadios[1].checked) {
     infoDiv.classList.remove("hide");
     radioButton1.disabled = true; // Disable the first radio button
+    radioButton3.disabled = true;
+    radioButton4.disabled = true;
   } else if (projectRadios[2].checked) {
     infoDiv.classList.remove("hide");
     radioButton1.disabled = true; // Disable the first radio button
     radioButton2.disabled = true;
+    radioButton4.disabled = true;
+  } else if (projectRadios[3].checked) {
+    infoDiv.classList.remove("hide");
+    radioButton1.disabled = true;
+    radioButton2.disabled = true;
+    radioButton3.disabled = true;
   } else {
     infoDiv.classList.add("hide");
     radioButton1.disabled = false; // Enable the first radio button
     radioButton2.disabled = false; // Enable the second radio button
+    radioButton3.disabled = false;
+    radioButton4.disabled = false;
   }
 }
 projectRadios.forEach((radio) => {
@@ -26,6 +38,9 @@ let shipContainer = document.getElementsByClassName("shipContainer")[0];
 let button = document.querySelector("button");
 const radioButton1 = document.getElementById("project01");
 const radioButton2 = document.getElementById("project02");
+const radioButton3 = document.getElementById("project03");
+const radioButton4 = document.getElementById("project04");
+
 let nameError = document.getElementById("name-error");
 let nameError1 = document.getElementById("name-error-1");
 let nameError2 = document.getElementById("name-error-2");
@@ -136,7 +151,7 @@ function validateDName() {
   const dob = document.getElementById("DOBInput").value;
   const data = document.getElementById("DOBInput");
   const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-  if (projectRadios[2].checked == true) {
+  if (projectRadios[2].checked == true || projectRadios[3].checked == true) {
     if (dob == "") {
       nameError2.innerHTML = "";
       data.style.border = "2px solid green";
@@ -323,7 +338,7 @@ function validateCountry() {
   let countryInp = document.getElementById("countryInput").value;
   const data = document.getElementById("countryInput");
   if (countryInp === "") {
-    countryInp = "US";
+    data.value = "US";
     nameError8.innerHTML = "";
     data.style.border = "2px solid green";
     return true;
