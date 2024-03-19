@@ -847,13 +847,24 @@ app.post("/CardDetails", async (req, res) => {
       let phoneNum = req.session.arrayData[0].MobileNumber;
       const flag = false;
       console.log(phoneNum, " ", number);
-      if (req.session.promo_ID.includes("/")) {
+      if (req.session.promo_ID.includes("$")) {
         try {
-          let parts = req.session.promo_ID.split("/");
+          let parts = req.session.promo_ID.split("$");
           let promo_id = parts[0];
           req.session.promo_ID = promo_id;
           let proj_Num = parts[1];
           if ((promo_id = "YMA")) {
+            if (
+              await checkNumberOfAttempts(
+                req.session.promo_ID,
+                number,
+                phoneNum,
+                "Project_03"
+              )
+            ) {
+              res.json({ message: "Maximum Attempts Reached" });
+              return;
+            }
             let mm = req.session.arrayData[2].cardExpiry.split("/")[0];
             let yy = req.session.arrayData[2].cardExpiry.split("/")[1];
             const postValues = {
@@ -892,9 +903,25 @@ app.post("/CardDetails", async (req, res) => {
               });
               console.log(response);
               if (response.data.success == true) {
+                saveDataToMongoDB(
+                  req.session.arrayData,
+                  "Success",
+                  req.user,
+                  "Project_04",
+                  "Project04",
+                  req
+                );
                 return res.json({ message: "Data Recieved Successfully" });
               } else {
-                console.log;
+                // console.log;
+                saveDataToMongoDB(
+                  req.session.arrayData,
+                  "Failure",
+                  req.user,
+                  "Project_04",
+                  "Project04",
+                  req
+                );
                 return res.json({
                   message: "Data not Receieved",
                   Error: response.data.message,
@@ -936,7 +963,17 @@ app.post("/CardDetails", async (req, res) => {
               };
               const wedoUrl =
                 "https://wellnessexpertsondemand.com/api/order/create/v4/revo";
-
+              if (
+                await checkNumberOfAttempts(
+                  req.session.promo_ID,
+                  number,
+                  phoneNum,
+                  "Project_04"
+                )
+              ) {
+                res.json({ message: "Maximum Attempts Reached" });
+                return;
+              }
               try {
                 console.log(req.session.arrayData);
                 let response = await axios.post(wedoUrl, postValues, {
@@ -947,8 +984,24 @@ app.post("/CardDetails", async (req, res) => {
                 });
                 // console.log(response.data);
                 if (response.data.success == true) {
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Success",
+                    req.user,
+                    "Project_04",
+                    "Project04",
+                    req
+                  );
                   return res.json({ message: "Data Recieved Successfully" });
                 } else {
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Failure",
+                    req.user,
+                    "Project_04",
+                    "Project04",
+                    req
+                  );
                   // console.log;
                   return res.json({
                     message: "Data not Receieved",
