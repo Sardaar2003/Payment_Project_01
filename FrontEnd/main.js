@@ -138,6 +138,10 @@ btn.addEventListener("click", () => {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
         window.location.href = "./Attempts.html";
+      } else if (data.message == "BIN ERROR") {
+        btn.disabled = false;
+        btn.innerHTML = "SUBMIT";
+        window.location.href = "./errorBinList.html";
       } else {
         btn.disabled = false;
         btn.innerHTML = "SUBMIT";
