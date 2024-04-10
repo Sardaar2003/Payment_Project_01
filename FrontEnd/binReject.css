@@ -1,0 +1,57 @@
+* {
+    background-color: #FDF7E4;
+}
+
+
+body {
+    display: flex;
+    justify-content: center;
+    /* height: 50vh; */
+
+}
+
+.binInput {
+    color: black;
+    font-size: medium;
+    width: 20%;
+    height: 1.5rem;
+    text-transform: capitalize;
+}
+
+#bin-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+#bin-form label {
+    width: 50%;
+}
+
+#bin-form input {
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    margin-right: 5rem;
+    /* background-color: green; */
+    /* color: white; */
+    font-weight: bolder;
+}
+
+button {
+    border-radius: 10px;
+    font-weight: bolder;
+    background-color: green;
+    border-color: none;
+    color: white;
+}
+
+h1 {
+    color: red;
+    font-size: large;
+    width: 20%;
+    height: 1rem;
+    text-transform: capitalize;
+}
