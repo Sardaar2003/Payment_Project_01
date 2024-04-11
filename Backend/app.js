@@ -904,15 +904,21 @@ app.get("/projectManagement", async (req, res) => {
 app.get("/insertDataAndDownload", async (req, res) => {
   try {
     const authorizedUser = ["Sameer", "ashishrane", "Gurtej"];
-    const userId = req.session.User; // Fetch all log data from MongoDB
+    const userId = req.session.User;
+
     if (authorizedUser.includes(userId)) {
-      const allLogData = await LogData.find();
+      // Retrieve the last 100 records based on insertion order
+      const allLogData = await LogData.find({})
+        .sort({ _id: -1 }) // Sort by _id in descending order (assuming it represents insertion order)
+        .limit(100); // Limit to the last 100 records
+
       // Create a new workbook and add a worksheet
       const workbook = new excel.Workbook();
       const sheetName = "Log Data";
       const worksheet = workbook.addWorksheet(sheetName, {
         properties: { tabColor: { argb: "FF00FF00" } },
       });
+
       // Add headers for the worksheet
       const headers = [
         "Timestamp",
@@ -939,6 +945,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
         "Attempt Number",
       ];
       worksheet.addRow(headers);
+
       // Insert log data into the worksheet
       allLogData.forEach((logEntry) => {
         const values = [
@@ -967,12 +974,14 @@ app.get("/insertDataAndDownload", async (req, res) => {
         ];
         worksheet.addRow(values);
       });
+
       // Set the response headers to trigger download
       res.setHeader(
         "Content-Type",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
       res.setHeader("Content-Disposition", "attachment; filename=LogData.xlsx");
+
       // Write the workbook to the response
       await workbook.xlsx.write(res);
       console.log("Excel file sent as response.");
