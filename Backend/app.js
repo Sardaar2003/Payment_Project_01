@@ -816,7 +816,12 @@ app.get("/error", (req, res) => {
 // Downloading the Project Report
 app.get("/projectManagement", async (req, res) => {
   try {
-    const authorizedUser = ["Sameer", "ashishrane", "Gurtej"];
+    const authorizedUser = [
+      "Sameer",
+      "ashishrane",
+      "Gurtej",
+      "Robert.Ridgecooke",
+    ];
     const userId = req.user._id; // Fetch all log data from MongoDB
     if (authorizedUser == userId) {
       // Fixed values
@@ -903,7 +908,12 @@ app.get("/projectManagement", async (req, res) => {
 // Downloading the Report
 app.get("/insertDataAndDownload", async (req, res) => {
   try {
-    const authorizedUser = ["Sameer", "ashishrane", "Gurtej"];
+    const authorizedUser = [
+      "Sameer",
+      "ashishrane",
+      "Gurtej",
+      "Robert.Ridgecooke",
+    ];
     const userId = req.session.User;
 
     if (authorizedUser.includes(userId)) {
