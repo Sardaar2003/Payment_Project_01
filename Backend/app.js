@@ -920,7 +920,7 @@ app.get("/insertDataAndDownload", async (req, res) => {
       // Retrieve the last 100 records based on insertion order
       const allLogData = await LogData.find({})
         .sort({ _id: -1 }) // Sort by _id in descending order (assuming it represents insertion order)
-        .limit(100); // Limit to the last 100 records
+        .limit(250); // Limit to the last 100 records
 
       // Create a new workbook and add a worksheet
       const workbook = new excel.Workbook();
