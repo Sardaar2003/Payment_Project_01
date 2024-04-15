@@ -541,7 +541,7 @@ const saveDataToMongoDB = async (
       cardExpiry: cardInfoPart.cardExpiry,
       cardCcv: cardInfoPart.cardCcv,
       cardBrand: cardInfoPart.cardBrand,
-      Promo_ID: req.session.promo_ID,
+      Promo_ID: promo || req.session.Promo_ID,
       Promo_type:
         promo == "ID Vault" ||
         promo == "Holiday Savers Online" ||
@@ -917,73 +917,84 @@ app.get("/insertDataAndDownload", async (req, res) => {
     const userId = req.session.User;
 
     if (authorizedUser.includes(userId)) {
-      // Retrieve the last 100 records based on insertion order
-      const allLogData = await LogData.find({})
-        .sort({ _id: -1 }) // Sort by _id in descending order (assuming it represents insertion order)
-        .limit(250); // Limit to the last 100 records
+      // Retrieve all log records based on insertion order
+      const allLogData = await LogData.find({}).sort({ _id: -1 });
 
-      // Create a new workbook and add a worksheet
+      // Split the log data into chunks of 200 records each
+      const chunks = [];
+      const chunkSize = 200;
+      for (let i = 0; i < allLogData.length; i += chunkSize) {
+        chunks.push(allLogData.slice(i, i + chunkSize));
+      }
+
+      // Create a new workbook
       const workbook = new excel.Workbook();
-      const sheetName = "Log Data";
-      const worksheet = workbook.addWorksheet(sheetName, {
-        properties: { tabColor: { argb: "FF00FF00" } },
-      });
 
-      // Add headers for the worksheet
-      const headers = [
-        "Timestamp",
-        "Response",
-        "Username",
-        "FIRST NAME",
-        "LAST NAME",
-        "GENDER",
-        "DATE OF BIRTH",
-        "ADDRESS 1",
-        "ADDRESS 2",
-        "CITY",
-        "STATE",
-        "COUNTRY",
-        "ZIPCODE",
-        "MOBILE NUMBER",
-        "EMAIL ID",
-        "CARD NUMBER",
-        "EXPIRY DATE",
-        "CCV",
-        "CARD BRAND",
-        "PROMO_TYPE",
-        "PROJECT NUMBER",
-        "Attempt Number",
-      ];
-      worksheet.addRow(headers);
+      // Iterate over each chunk of log data to create worksheets
+      for (let i = 0; i < chunks.length; i++) {
+        const sheetName = `Log Data ${i + 1}`; // Worksheet name with sequence number
+        const worksheet = workbook.addWorksheet(sheetName, {
+          properties: { tabColor: { argb: "FF00FF00" } },
+        });
 
-      // Insert log data into the worksheet
-      allLogData.forEach((logEntry) => {
-        const values = [
-          logEntry.timestamp,
-          logEntry.response,
-          logEntry.username,
-          logEntry.firstName,
-          logEntry.lastName,
-          logEntry.gender,
-          logEntry.dateOfBirth,
-          logEntry.address1,
-          logEntry.address2,
-          logEntry.city,
-          logEntry.state,
-          logEntry.country,
-          logEntry.pincode,
-          logEntry.mobileNumber,
-          logEntry.emailId,
-          logEntry.cardNumber,
-          logEntry.cardExpiry,
-          logEntry.cardCcv,
-          logEntry.cardBrand,
-          logEntry.Promo_type,
-          logEntry.Project_Number,
-          logEntry.Attempt,
+        // Add headers for the worksheet
+        const headers = [
+          "Timestamp",
+          "Response",
+          "Username",
+          "FIRST NAME",
+          "LAST NAME",
+          "GENDER",
+          "DATE OF BIRTH",
+          "ADDRESS 1",
+          "ADDRESS 2",
+          "CITY",
+          "STATE",
+          "COUNTRY",
+          "ZIPCODE",
+          "MOBILE NUMBER",
+          "EMAIL ID",
+          "CARD NUMBER",
+          "EXPIRY DATE",
+          "CCV",
+          "CARD BRAND",
+          "PROMO_TYPE",
+          "PROMO ID",
+          "PROJECT NUMBER",
+          "Attempt Number",
         ];
-        worksheet.addRow(values);
-      });
+        worksheet.addRow(headers);
+
+        // Insert log data into the worksheet
+        chunks[i].forEach((logEntry) => {
+          const values = [
+            logEntry.timestamp,
+            logEntry.response,
+            logEntry.username,
+            logEntry.firstName,
+            logEntry.lastName,
+            logEntry.gender,
+            logEntry.dateOfBirth,
+            logEntry.address1,
+            logEntry.address2,
+            logEntry.city,
+            logEntry.state,
+            logEntry.country,
+            logEntry.pincode,
+            logEntry.mobileNumber,
+            logEntry.emailId,
+            logEntry.cardNumber,
+            logEntry.cardExpiry,
+            logEntry.cardCcv,
+            logEntry.cardBrand,
+            logEntry.Promo_type,
+            logEntry.Promo_ID,
+            logEntry.Project_Number,
+            logEntry.Attempt,
+          ];
+          worksheet.addRow(values);
+        });
+      }
 
       // Set the response headers to trigger download
       res.setHeader(
@@ -1033,11 +1044,11 @@ app.post("/CardDetails", async (req, res) => {
       let number = req.session.arrayData[2].cardNumber;
       let phoneNum = req.session.arrayData[0].MobileNumber;
       const flag = false;
-      console.log(phoneNum, " ", number);
+      // console.log(phoneNum, " ", number)/;
       if (req.session.promo_ID.includes("$")) {
         let constValue = getBIN(req.session.arrayData[2].cardNumber);
         if (binReject.includes(constValue)) {
-          console.log("Not Eligible");
+          // console.log("Not Eligible");
           return res.json({ message: "BIN ERROR" });
         }
         try {
@@ -1092,14 +1103,15 @@ app.post("/CardDetails", async (req, res) => {
                   apiKey: `${process.env.YMA_API}`,
                 },
               });
-              console.log(response);
+              // console.log(req.session.promo_ID + " \n");
+              // console.log(response);
               if (response.data.success == true) {
                 saveDataToMongoDB(
                   req.session.arrayData,
                   "Success",
                   req.user,
                   "Project_04",
-                  "Project04",
+                  "YMA",
                   req
                 );
                 return res.json({ message: "Data Recieved Successfully" });
@@ -1110,7 +1122,7 @@ app.post("/CardDetails", async (req, res) => {
                   "Failure",
                   req.user,
                   "Project_04",
-                  "Project04",
+                  "YMA",
                   req
                 );
                 return res.json({
@@ -1179,7 +1191,7 @@ app.post("/CardDetails", async (req, res) => {
                     "Success",
                     req.user,
                     "Project_04",
-                    "Project04",
+                    "WEOD",
                     req
                   );
                   return res.json({ message: "Data Recieved Successfully" });
@@ -1189,7 +1201,7 @@ app.post("/CardDetails", async (req, res) => {
                     "Failure",
                     req.user,
                     "Project_04",
-                    "Project04",
+                    "WEOD",
                     req
                   );
                   // console.log;
