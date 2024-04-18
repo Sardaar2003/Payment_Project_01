@@ -1123,7 +1123,7 @@ app.post("/CardDetails", async (req, res) => {
 
                   }
                   else{
-                    console.log(`Approved Failed , Order ID : ${responseVal.order_id}`);
+                    console.log(`Approved Failed`);
                     saveDataToMongoDB(
                       req.session.arrayData,
                       "Failure",
@@ -1132,7 +1132,7 @@ app.post("/CardDetails", async (req, res) => {
                       "YMA",
                       req
                     );
-                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed , Order ID : ${responseVal.order_id}` });
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed` });
                   }
                 }
                 else{
@@ -1237,7 +1237,7 @@ app.post("/CardDetails", async (req, res) => {
                     return res.json({ message: "Data not Receieved" ,Error:`Approved Successfully , Order ID : ${responseVal.order_id}` });
                   }
                   else{
-                    console.log(`Approved Failed , Order ID : ${responseVal.order_id}`);
+                    console.log(`Approved Failed`);
                     saveDataToMongoDB(
                       req.session.arrayData,
                       "Failure",
@@ -1246,7 +1246,7 @@ app.post("/CardDetails", async (req, res) => {
                       "WEOD",
                       req
                     );
-                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed , Order ID : ${responseVal.order_id}` });
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed` });
                   }
                 }
                 else{
