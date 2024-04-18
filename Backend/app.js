@@ -1104,17 +1104,53 @@ app.post("/CardDetails", async (req, res) => {
                 },
               });
               // console.log(req.session.promo_ID + " \n");
-              // console.log(response);
+              console.log(response.data.data);
               if (response.data.success == true) {
-                saveDataToMongoDB(
-                  req.session.arrayData,
-                  "Success",
-                  req.user,
-                  "Project_04",
-                  "YMA",
-                  req
-                );
-                return res.json({ message: "Data Recieved Successfully" });
+                const responseVal=response.data.data;
+                if (responseVal.hasOwnProperty("order_id")&& responseVal.hasOwnProperty("approved")){
+                  if (responseVal.approved==true){
+                    console.log(`Approved Successfully , Order ID : ${responseVal.order_id}`);
+                    saveDataToMongoDB(
+                      req.session.arrayData,
+                      "Success",
+                      req.user,
+                      "Project_04",
+                      "YMA",
+                      req
+                    );
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Successfully , Order ID : ${responseVal.order_id}` });
+
+
+                  }
+                  else{
+                    console.log(`Approved Failed , Order ID : ${responseVal.order_id}`);
+                    saveDataToMongoDB(
+                      req.session.arrayData,
+                      "Failure",
+                      req.user,
+                      "Project_04",
+                      "YMA",
+                      req
+                    );
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed , Order ID : ${responseVal.order_id}` });
+                  }
+                }
+                else{
+                  console.log(`Approved Failure`);
+                  saveDataToMongoDB(
+                    req.session.arrayData,
+                    "Failure",
+                    req.user,
+                    "Project_04",
+                    "YMA",
+                    req
+                  );
+                  return res.json({
+                    message: "Data not Receieved",
+                    Error: response.data.message,
+                  });
+                }
+                
               } else {
                 // console.log;
                 saveDataToMongoDB(
@@ -1184,17 +1220,52 @@ app.post("/CardDetails", async (req, res) => {
                     apiKey: `${process.env.WEOD_API}`,
                   },
                 });
-                // console.log(response.data);
+                console.log(response.data);
                 if (response.data.success == true) {
+                  const responseVal=response.data.data;
+                if (responseVal.hasOwnProperty("order_id")&& responseVal.hasOwnProperty("approved")){
+                  if (responseVal.approved==true){
+                    console.log(`Approved Successfully , Order ID : ${responseVal.order_id}`);
+                    saveDataToMongoDB(
+                      req.session.arrayData,
+                      "Success",
+                      req.user,
+                      "Project_04",
+                      "WEOD",
+                      req
+                    );
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Successfully , Order ID : ${responseVal.order_id}` });
+                  }
+                  else{
+                    console.log(`Approved Failed , Order ID : ${responseVal.order_id}`);
+                    saveDataToMongoDB(
+                      req.session.arrayData,
+                      "Failure",
+                      req.user,
+                      "Project_04",
+                      "WEOD",
+                      req
+                    );
+                    return res.json({ message: "Data not Receieved" ,Error:`Approved Failed , Order ID : ${responseVal.order_id}` });
+                  }
+                }
+                else{
+                  console.log(`Approved Failure`);
                   saveDataToMongoDB(
                     req.session.arrayData,
-                    "Success",
+                    "Failure",
                     req.user,
                     "Project_04",
                     "WEOD",
                     req
                   );
-                  return res.json({ message: "Data Recieved Successfully" });
+                  return res.json({
+                    message: "Data not Receieved",
+                    Error: response.data.message,
+                  });
+                }
+                
+              
                 } else {
                   saveDataToMongoDB(
                     req.session.arrayData,
