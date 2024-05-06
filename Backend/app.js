@@ -626,7 +626,7 @@ const checkNumberOfAttempts = async (
     console.log(existingEntry1);
 
     // If a duplicate entry is found, return true
-    return existingEntry1 >= 5;
+    return existingEntry1 >= 3;
   } catch (error) {
     // Handle any errors during the database query
     console.error("Error checking for Number of Attempts entry:", error);
